@@ -1,0 +1,9 @@
+[package]
+name = "prosic2"
+version = "0.1.0"
+authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
+
+[dependencies]
+libprosic = { git = "https://github.com/prosic/prosic2" }
+clap = {version = "2.9.*", features = ["yaml", "color", "suggestions"]}
+rust_htslib = "0.7.*"

@@ -1,9 +1,11 @@
 [package]
-name = "prosic2"
-version = "0.1.0"
+name = "prosic"
+version = "2.0.0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = { git = "https://github.com/prosic/prosic2" }
+libprosic = { git = "https://github.com/prosic/libprosic" }
 clap = {version = "2.9.*", features = ["yaml", "color", "suggestions"]}
-rust_htslib = "0.7.*"
+rust-htslib = { git="https://github.com/rust-bio/rust-htslib.git" }
+log = "0.3.*"
+fern = "0.3.*"

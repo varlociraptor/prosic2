@@ -1,45 +1,66 @@
-name: PROSIC2
+name: prosic
 author: Johannes Köster <johannes.koester@tu-dortmund.de>, Louis Dijkstra
 about: "A caller for somatic indels in tumor-normal pairs."
 args:
   - verbose:
-    short: v
-    help: Provide verbose output.
+      short: v
+      help: Provide verbose output.
 subcommands:
   - tumor-normal:
-    args:
-      - tumor:
-        required: true
-        help: BAM file with reads from tumor sample.
-      - normal:
-        required: true
-        help: BAM file with reads from normal sample.
-      - tumor_insert_size:
-        long: tumor-isize
-        required: true
-        help: Expected insert size of tumor sample.
-      - tumor_effective_mutation_rate:
-        long: effmut
-        required: true
-        help: Effective mutation rate of tumor sample.
-      - tumor_ploidy:
-        long: tumor-ploidy
-        help: Average ploidy of tumor sample [2].
-      - tumor_purity:
-        long: purity
-        help: Purity of tumor sample [1.0].
-      - normal_insert_size:
-        long: normal-isize
-        help: Expected insert size of tumor sample.
-      - normal_ploidy:
-        long: normal-ploidy
-        help: Ploidy of normal sample [2].
-      - normal_heterozygosity:
-        long: het
-        help: Expected heterozygosity of normal sample [0.001].
-      - min_somatic_af:
-        long: min-somatic-af
-        help: Minimum allele frequency for somatic mutation [0.05].
-      - pileup_window:
-        long: pileup-window
-        help: Window to investigate for evidence left and right of each variant [2500].
+      about: Call somatic and germline variants from a tumor-normal sample pair.
+      args:
+        - tumor:
+            required: true
+            help: BAM file with reads from tumor sample.
+        - normal:
+            required: true
+            help: BAM file with reads from normal sample.
+        - tumor_mean_insert_size:
+            long: tumor-mean-isize
+            value_name: FLOAT
+            required: true
+            help: Mean tumor sample insert size.
+        - tumor_sd_insert_size:
+            long: tumor-sd-isize
+            required: true
+            value_name: FLOAT
+            help: Standard deviation of tumor sample insert size.
+        - tumor_effective_mutation_rate:
+            long: effmut
+            required: true
+            value_name: FLOAT
+            help: Effective mutation rate of tumor sample.
+        - tumor_ploidy:
+            long: tumor-ploidy
+            value_name: INT
+            help: Average ploidy of tumor sample [2].
+        - tumor_purity:
+            long: purity
+            value_name: FLOAT
+            help: Purity of tumor sample [1.0].
+        - normal_mean_insert_size:
+            long: normal-mean-isize
+            value_name: FLOAT
+            required: true
+            help: Mean normal sample insert size.
+        - normal_sd_insert_size:
+            long: normal-sd-isize
+            value_name: FLOAT
+            required: true
+            help: Standard deviation of normal sample insert size
+        - normal_ploidy:
+            long: normal-ploidy
+            value_name: INT
+            help: Ploidy of normal sample [2].
+        - normal_heterozygosity:
+            long: het
+            value_name: FLOAT
+            help: Expected heterozygosity of normal sample [0.001].
+        - min_somatic_af:
+            long: min-somatic-af
+            value_name: FLOAT
+            help: Minimum allele frequency for somatic mutation [0.05].
+        - pileup_window:
+            long: pileup-window
+            value_name: INT
+            help: Window to investigate for evidence left and right of each variant [2500].

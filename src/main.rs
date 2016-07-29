@@ -3,11 +3,14 @@ extern crate rust_htslib;
 #[macro_use]
 extern crate log;
 extern crate fern;
+#[macro_use]
+extern crate clap;
+
+use clap::{App,AppSettings};
 
 use std::process;
 
-use libprosic;
-use rust_htslib::{bam, bcf};
+use rust_htslib::bam;
 
 fn main() {
     // parse command line
@@ -38,10 +41,12 @@ fn main() {
 
     if let Some(matches) = matches.subcommand_matches("tumor-normal") {
         // read command line parameters
-        let normal_insert_size = value_t!(matches, "normal_insert_size", u32).unwrap();
+        let normal_mean_insert_size = value_t!(matches, "normal_mean_insert_size", f64).unwrap();
+        let normal_sd_insert_size = value_t!(matches, "normal_sd_insert_size", f64).unwrap();
         let normal_heterozygosity = value_t!(matches, "normal_heterozygosity", f64).unwrap_or(0.001);
         let normal_ploidy = value_t!(matches, "normal_ploidy", u32).unwrap_or(2);
-        let tumor_insert_size = value_t!(matches, "tumor_insert_size", u32).unwrap();
+        let tumor_mean_insert_size = value_t!(matches, "tumor_mean_insert_size", f64).unwrap();
+        let tumor_sd_insert_size = value_t!(matches, "tumor_sd_insert_size", f64).unwrap();
         let tumor_effective_mutation_rate = value_t!(matches, "tumor_effective_mutation_rate", f64).unwrap();
         let tumor_ploidy = value_t!(matches, "tumor_ploidy", u32).unwrap_or(2);
         let tumor_purity = value_t!(matches, "tumor_purity", f64).unwrap_or(1.0);
@@ -50,17 +55,20 @@ fn main() {
         let normal = matches.value_of("normal").unwrap();
         let tumor = matches.value_of("tumor").unwrap();
 
-        if let Ok(mut tumor_bam) = bam::IndexedReader::new(tumor) {
-            if let Ok(mut normal_bam) = bam::IndexedReader::new(normal) {
+        if let Ok(tumor_bam) = bam::IndexedReader::new(&tumor) {
+            if let Ok(normal_bam) = bam::IndexedReader::new(&normal) {
                 let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
-                    tumor_bam.header.target_len(tid)
+                    s + tumor_bam.header.target_len(tid).unwrap() as u64
                 });
 
                 // init tumor sample
                 let tumor_sample = libprosic::Sample::new(
                     tumor_bam,
                     pileup_window,
-                    tumor_insert_size,
+                    libprosic::InsertSize {
+                        mean: tumor_mean_insert_size,
+                        sd: tumor_sd_insert_size
+                    },
                     libprosic::priors::WilliamsTumorModel::new(
                         tumor_ploidy,
                         tumor_effective_mutation_rate,
@@ -72,7 +80,10 @@ fn main() {
                 let normal_sample = libprosic::Sample::new(
                     normal_bam,
                     pileup_window,
-                    normal_insert_size,
+                    libprosic::InsertSize {
+                        mean: normal_mean_insert_size,
+                        sd: normal_sd_insert_size
+                    },
                     libprosic::priors::InfiniteSitesNeutralVariationModel::new(
                         normal_ploidy,
                         normal_heterozygosity
@@ -80,7 +91,7 @@ fn main() {
                 );
 
                 // init joint model
-                let joint_model = libprosic::JointModel::new(
+                let mut joint_model = libprosic::JointModel::new(
                     libprosic::LatentVariableModel::new(tumor_purity),
                     libprosic::LatentVariableModel::new(1.0),
                     tumor_sample,
@@ -89,13 +100,13 @@ fn main() {
 
                 // setup events
                 let events = [
-                    libprosic::Event{ name: "GERMLINE", af_case: 0.0..1.0, af_control: vec![0.5, 1.0] },
-                    libprosic::Event{ name: "SOMATIC", af_case: min_somatic_af..1.0, af_control: vec![0.0] }
+                    libprosic::Event{ name: "GERMLINE".to_owned(), af_case: 0.0..1.0, af_control: vec![0.5, 1.0] },
+                    libprosic::Event{ name: "SOMATIC".to_owned(), af_case: min_somatic_af..1.0, af_control: vec![0.0] }
                 ];
 
                 // perform calling
-                if let Err(msg) = libprosic::call("-", "-", events, joint_model) {
-                    error!(msg);
+                if let Err(msg) = libprosic::call(&"-", &"-", &events, &mut joint_model) {
+                    error!("{}", msg);
                     process::exit(1);
                 }
             } else {

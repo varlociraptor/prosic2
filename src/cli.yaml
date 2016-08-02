@@ -30,10 +30,10 @@ subcommands:
             required: true
             value_name: FLOAT
             help: Effective mutation rate of tumor sample.
-        - tumor_ploidy:
-            long: tumor-ploidy
+        - ploidy:
+            long: ploidy
             value_name: INT
-            help: Average ploidy of tumor sample [2].
+            help: Average ploidy of tumor and normal sample [2].
         - tumor_purity:
             long: purity
             value_name: FLOAT
@@ -48,10 +48,6 @@ subcommands:
             value_name: FLOAT
             required: true
             help: Standard deviation of normal sample insert size
-        - normal_ploidy:
-            long: normal-ploidy
-            value_name: INT
-            help: Ploidy of normal sample [2].
         - normal_heterozygosity:
             long: het
             value_name: FLOAT

@@ -44,11 +44,10 @@ fn main() {
         let normal_mean_insert_size = value_t!(matches, "normal_mean_insert_size", f64).unwrap();
         let normal_sd_insert_size = value_t!(matches, "normal_sd_insert_size", f64).unwrap();
         let normal_heterozygosity = value_t!(matches, "normal_heterozygosity", f64).unwrap_or(0.001);
-        let normal_ploidy = value_t!(matches, "normal_ploidy", u32).unwrap_or(2);
+        let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
         let tumor_mean_insert_size = value_t!(matches, "tumor_mean_insert_size", f64).unwrap();
         let tumor_sd_insert_size = value_t!(matches, "tumor_sd_insert_size", f64).unwrap();
         let tumor_effective_mutation_rate = value_t!(matches, "tumor_effective_mutation_rate", f64).unwrap();
-        let tumor_ploidy = value_t!(matches, "tumor_ploidy", u32).unwrap_or(2);
         let tumor_purity = value_t!(matches, "tumor_purity", f64).unwrap_or(1.0);
         let min_somatic_af = value_t!(matches, "min_somatic_af", f64).unwrap_or(0.05);
         let pileup_window = value_t!(matches, "pileup_window", u32).unwrap_or(2500);
@@ -69,10 +68,12 @@ fn main() {
                         mean: tumor_mean_insert_size,
                         sd: tumor_sd_insert_size
                     },
-                    libprosic::priors::WilliamsTumorModel::new(
-                        tumor_ploidy,
+                    libprosic::priors::TumorModel::new(
+                        ploidy,
                         tumor_effective_mutation_rate,
-                        genome_size
+                        genome_size,
+                        tumor_purity,
+                        normal_heterozygosity
                     )
                 );
 
@@ -85,7 +86,7 @@ fn main() {
                         sd: normal_sd_insert_size
                     },
                     libprosic::priors::InfiniteSitesNeutralVariationModel::new(
-                        normal_ploidy,
+                        ploidy,
                         normal_heterozygosity
                     )
                 );

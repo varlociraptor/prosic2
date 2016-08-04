@@ -7,7 +7,7 @@ args:
       help: Provide verbose output.
 subcommands:
   - tumor-normal:
-      about: Call somatic and germline variants from a tumor-normal sample pair.
+      about: Call somatic and germline variants from a tumor-normal sample pair and a VCF/BCF with candidate variants from STDIN.
       args:
         - tumor:
             required: true
@@ -60,3 +60,11 @@ subcommands:
             long: pileup-window
             value_name: INT
             help: Window to investigate for evidence left and right of each variant [2500].
+  - estimate-mutation-rate:
+      about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
+      args:
+        - observations:
+            value_name: FILE
+            help: Path to file that will contain the observed frequencies.
+        - use-all:
+            help: Per default, only SNVs will be considered. This option lets the estimation use all provided variants.

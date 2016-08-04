@@ -9,3 +9,5 @@ clap = {version = "2.9.*", features = ["yaml", "color", "suggestions"]}
 rust-htslib = { git="https://github.com/rust-bio/rust-htslib.git" }
 log = "0.3.*"
 fern = "0.3.*"
+csv = "0.14.*"
+itertools = "0.4.*"

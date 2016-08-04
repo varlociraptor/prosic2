@@ -74,7 +74,8 @@ fn main() {
                         genome_size,
                         tumor_purity,
                         normal_heterozygosity
-                    )
+                    ),
+                    libprosic::likelihood::LatentVariableModel::new(tumor_purity)
                 );
 
                 // init normal sample
@@ -88,25 +89,32 @@ fn main() {
                     libprosic::priors::InfiniteSitesNeutralVariationModel::new(
                         ploidy,
                         normal_heterozygosity
-                    )
+                    ),
+                    libprosic::likelihood::LatentVariableModel::new(1.0)
                 );
 
                 // init joint model
-                let mut joint_model = libprosic::JointModel::new(
-                    libprosic::LatentVariableModel::new(tumor_purity),
-                    libprosic::LatentVariableModel::new(1.0),
+                let mut joint_model = libprosic::model::ContinuousVsDiscreteModel::new(
                     tumor_sample,
                     normal_sample
                 );
 
                 // setup events
                 let events = [
-                    libprosic::Event{ name: "GERMLINE".to_owned(), af_case: 0.0..1.0, af_control: vec![0.5, 1.0] },
-                    libprosic::Event{ name: "SOMATIC".to_owned(), af_case: min_somatic_af..1.0, af_control: vec![0.0] }
+                    libprosic::case_control::Event{
+                        name: "GERMLINE".to_owned(),
+                        af_case: 0.0..1.0,
+                        af_control: vec![0.5, 1.0]
+                    },
+                    libprosic::case_control::Event{
+                        name: "SOMATIC".to_owned(),
+                        af_case: min_somatic_af..1.0,
+                        af_control: vec![0.0]
+                    }
                 ];
 
                 // perform calling
-                if let Err(msg) = libprosic::call(&"-", &"-", &events, &mut joint_model) {
+                if let Err(msg) = libprosic::case_control::call(&"-", &"-", &events, &mut joint_model) {
                     error!("{}", msg);
                     process::exit(1);
                 }

@@ -8,6 +8,8 @@ extern crate clap;
 extern crate csv;
 extern crate itertools;
 
+use std::process;
+
 use clap::{App,AppSettings};
 
 pub mod call;
@@ -42,6 +44,9 @@ fn main() {
     }
 
     if let Some(matches) = matches.subcommand_matches("tumor-normal") {
-        call::tumor_normal(matches);
+        if let Err(e) = call::tumor_normal(matches) {
+            error!("{}", e);
+            process::exit(1);
+        }
     }
 }

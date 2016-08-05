@@ -63,6 +63,14 @@ subcommands:
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:
+        - min-af:
+            long: min-af
+            value_name: FLOAT
+            help: Minimum allele frequency to consider [0.12].
+        - max-af:
+            long: max-af
+            value_name: FLOAT
+            help: Maximum allele frequency to consider [0.25].
         - observations:
             value_name: FILE
             help: Path to file that will contain the observed frequencies.

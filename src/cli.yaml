@@ -15,48 +15,54 @@ subcommands:
         - normal:
             required: true
             help: BAM file with reads from normal sample.
-        - tumor_mean_insert_size:
-            long: tumor-mean-isize
+        - insert-size-mean:
+            long: isize-mean
             value_name: FLOAT
             required: true
-            help: Mean tumor sample insert size.
-        - tumor_sd_insert_size:
-            long: tumor-sd-isize
+            help: Mean of sample insert size.
+        - insert-size-sd:
+            long: isize-sd
             required: true
             value_name: FLOAT
-            help: Standard deviation of tumor sample insert size.
-        - tumor_effective_mutation_rate:
+            help: Standard deviation of sample insert size.
+        - effective-mutation-rate:
             long: effmut
             required: true
             value_name: FLOAT
-            help: Effective mutation rate of tumor sample.
+            help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
+        - deletion-factor:
+            long: deletion-factor
+            value_name: FLOAT
+            help: Factor of deletion mutation rate relative to SNV mutation rate [0.03 according to Hodkinson et al. Nature Reviews Genetics 2011].
+        - insertion-factor:
+            long: insertion-factor
+            value_name: FLOAT
+            help: Factor of insertion mutation rate relative to SNV mutation rate [0.01 according to Hodkinson et al. Nature Reviews Genetics 2011].
         - ploidy:
             long: ploidy
             value_name: INT
             help: Average ploidy of tumor and normal sample [2].
-        - tumor_purity:
+        - purity:
             long: purity
             value_name: FLOAT
             help: Purity of tumor sample [1.0].
-        - normal_mean_insert_size:
-            long: normal-mean-isize
+        - normal-insert-size-mean:
+            long: normal-isize-mean
             value_name: FLOAT
-            required: true
-            help: Mean normal sample insert size.
-        - normal_sd_insert_size:
-            long: normal-sd-isize
+            help: Mean of normal sample insert size (if it differs from tumor).
+        - normal-insert-size-sd:
+            long: normal-isize-sd
             value_name: FLOAT
-            required: true
-            help: Standard deviation of normal sample insert size
-        - normal_heterozygosity:
+            help: Standard deviation of normal sample insert size (if it differs from tumor).
+        - heterozygosity:
             long: het
             value_name: FLOAT
             help: Expected heterozygosity of normal sample [1.25E-4].
-        - min_somatic_af:
+        - min-somatic-af:
             long: min-somatic-af
             value_name: FLOAT
             help: Minimum allele frequency for somatic mutation [0.05].
-        - pileup_window:
+        - pileup-window:
             long: pileup-window
             value_name: INT
             help: Window to investigate for evidence left and right of each variant [2500].

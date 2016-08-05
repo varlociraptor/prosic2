@@ -6,16 +6,18 @@ use rust_htslib::bam;
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Sync>> {
     // read command line parameters
-    let normal_mean_insert_size = value_t!(matches, "normal_mean_insert_size", f64).unwrap();
-    let normal_sd_insert_size = value_t!(matches, "normal_sd_insert_size", f64).unwrap();
-    let normal_heterozygosity = value_t!(matches, "normal_heterozygosity", f64).unwrap_or(1.25E-4);
+    let tumor_mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
+    let tumor_sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
+    let normal_mean_insert_size = value_t!(matches, "normal-insert-size-mean", f64).unwrap_or(tumor_mean_insert_size);
+    let normal_sd_insert_size = value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_sd_insert_size);
+    let normal_heterozygosity = value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4);
     let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
-    let tumor_mean_insert_size = value_t!(matches, "tumor_mean_insert_size", f64).unwrap();
-    let tumor_sd_insert_size = value_t!(matches, "tumor_sd_insert_size", f64).unwrap();
-    let tumor_effective_mutation_rate = value_t!(matches, "tumor_effective_mutation_rate", f64).unwrap();
-    let tumor_purity = value_t!(matches, "tumor_purity", f64).unwrap_or(1.0);
-    let min_somatic_af = value_t!(matches, "min_somatic_af", f64).unwrap_or(0.05);
-    let pileup_window = value_t!(matches, "pileup_window", u32).unwrap_or(2500);
+    let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
+    let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap_or(0.03);
+    let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap_or(0.01);
+    let tumor_purity = value_t!(matches, "purity", f64).unwrap_or(1.0);
+    let min_somatic_af = value_t!(matches, "min-somatic-af", f64).unwrap_or(0.05);
+    let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
     let normal = matches.value_of("normal").unwrap();
     let tumor = matches.value_of("tumor").unwrap();
 
@@ -36,6 +38,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
         libprosic::priors::TumorModel::new(
             ploidy,
             tumor_effective_mutation_rate,
+            deletion_factor,
+            insertion_factor,
             genome_size,
             tumor_purity,
             normal_heterozygosity

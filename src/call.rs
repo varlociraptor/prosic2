@@ -8,7 +8,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
     // read command line parameters
     let normal_mean_insert_size = value_t!(matches, "normal_mean_insert_size", f64).unwrap();
     let normal_sd_insert_size = value_t!(matches, "normal_sd_insert_size", f64).unwrap();
-    let normal_heterozygosity = value_t!(matches, "normal_heterozygosity", f64).unwrap_or(0.001);
+    let normal_heterozygosity = value_t!(matches, "normal_heterozygosity", f64).unwrap_or(1.25E-4);
     let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
     let tumor_mean_insert_size = value_t!(matches, "tumor_mean_insert_size", f64).unwrap();
     let tumor_sd_insert_size = value_t!(matches, "tumor_sd_insert_size", f64).unwrap();

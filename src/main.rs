@@ -48,5 +48,10 @@ fn main() {
             error!("{}", e);
             process::exit(1);
         }
+    } else if let Some(matches) = matches.subcommand_matches("estimate-mutation-rate") {
+        if let Err(e) = estimate::effective_mutation_rate(matches) {
+            error!("{}", e);
+            process::exit(1);
+        }
     }
 }

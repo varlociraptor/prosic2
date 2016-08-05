@@ -78,7 +78,3 @@ subcommands:
             short: o
             value_name: FILE
             help: Path to file that will contain the observed frequencies.
-        - use-all:
-            long: use-all
-            short: a
-            help: Per default, only SNVs will be considered. This option lets the estimation use all provided variants.

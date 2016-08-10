@@ -1,5 +1,3 @@
-extern crate libprosic;
-extern crate rust_htslib;
 #[macro_use]
 extern crate log;
 extern crate fern;
@@ -7,6 +5,10 @@ extern crate fern;
 extern crate clap;
 extern crate csv;
 extern crate itertools;
+extern crate time;
+
+extern crate libprosic;
+extern crate rust_htslib;
 
 use std::process;
 
@@ -29,7 +31,7 @@ fn main() {
     let logger_config = fern::DispatchConfig {
         format: Box::new(|msg: &str, level: &log::LogLevel, _: &log::LogLocation| {
           match level {
-              &log::LogLevel::Debug => format!("DEBUG: {}", msg),
+              &log::LogLevel::Debug => format!("DEBUG[{}]: {}", time::now().strftime("%H:%M:%S").unwrap(), msg),
               _ => msg.to_owned()
           }
         }),

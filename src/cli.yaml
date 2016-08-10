@@ -7,7 +7,7 @@ args:
       help: Provide verbose output.
 subcommands:
   - tumor-normal:
-      about: Call somatic and germline variants from a tumor-normal sample pair and a VCF/BCF with candidate variants from STDIN.
+      about: Call somatic and germline variants from a tumor-normal sample pair and a VCF/BCF with candidate variants.
       args:
         - tumor:
             required: true
@@ -15,6 +15,15 @@ subcommands:
         - normal:
             required: true
             help: BAM file with reads from normal sample.
+        - candidates:
+            long: candidates
+            value_name: FILE
+            help: VCF/BCF file to process (if omitted, read from STDIN).
+        - output:
+            long: output
+            short: o
+            value_name: FILE
+            help: BCF file that shall contain the results (if omitted, write to STDOUT).
         - insert-size-mean:
             long: isize-mean
             value_name: FLOAT

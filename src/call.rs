@@ -20,6 +20,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
     let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
     let normal = matches.value_of("normal").unwrap();
     let tumor = matches.value_of("tumor").unwrap();
+    let candidates = matches.value_of("candidates").unwrap_or("-");
+    let output = matches.value_of("output").unwrap_or("-");
 
     let tumor_bam = bam::IndexedReader::new(&tumor).expect(&format!("Error reading BAM file {}.", tumor));
     let normal_bam = bam::IndexedReader::new(&normal).expect(&format!("Error reading BAM file {}.", normal));
@@ -70,20 +72,28 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
 
     // setup events
     let events = [
-        libprosic::case_control::Event{
-            name: "GERMLINE".to_owned(),
+        libprosic::case_control::CaseControlEvent {
+            name: "germline".to_owned(),
             af_case: 0.0..1.0,
             af_control: vec![0.5, 1.0]
         },
-        libprosic::case_control::Event{
-            name: "SOMATIC".to_owned(),
+        libprosic::case_control::CaseControlEvent {
+            name: "somatic".to_owned(),
             af_case: min_somatic_af..1.0,
             af_control: vec![0.0]
         }
     ];
+    // call absent variants as the complement of the other events
+    let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
 
     // perform calling
-    try!(libprosic::case_control::call(&"-", &"-", &events, &mut joint_model));
+    try!(libprosic::case_control::call(
+        &candidates,
+        &output,
+        &events,
+        Some(&absent_event),
+        &mut joint_model
+    ));
 
     Ok(())
 }

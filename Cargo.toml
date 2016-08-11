@@ -12,3 +12,9 @@ fern = "0.3.*"
 csv = "0.14.*"
 itertools = "0.4.*"
 time = "*"
+flame = { version = "^0.1.2", optional = true }
+flamer = { version = "^0.1.2", optional = true }
+
+[features]
+default = []
+flame_it = ["flame", "flamer", "libprosic/flame_it"]

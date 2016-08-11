@@ -1,3 +1,10 @@
+#![cfg_attr(feature="flame_it", feature(plugin))]
+#![cfg_attr(feature="flame_it", plugin(flamer))]
+#![cfg_attr(feature="flame_it", flame)]
+
+#[cfg(feature="flame_it")]
+extern crate flame;
+
 #[macro_use]
 extern crate log;
 extern crate fern;
@@ -10,12 +17,25 @@ extern crate time;
 extern crate libprosic;
 extern crate rust_htslib;
 
+#[cfg(feature="flame_it")]
+use std::fs::File;
 use std::process;
 
 use clap::{App,AppSettings};
 
 pub mod call;
 pub mod estimate;
+
+
+#[cfg(feature="flame_it")]
+fn write_flamegraph() {
+    flame::dump_html(&mut File::create("flame-graph.html").unwrap()).unwrap();
+}
+
+
+#[cfg(not(feature="flame_it"))]
+fn write_flamegraph() {
+}
 
 
 fn main() {
@@ -56,4 +76,6 @@ fn main() {
             process::exit(1);
         }
     }
+
+    write_flamegraph();
 }

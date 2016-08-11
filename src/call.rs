@@ -18,6 +18,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
     let tumor_purity = value_t!(matches, "purity", f64).unwrap_or(1.0);
     let min_somatic_af = value_t!(matches, "min-somatic-af", f64).unwrap_or(0.05);
     let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
+    let no_fragment_evidence = matches.is_present("no-fragment-evidence");
     let normal = matches.value_of("normal").unwrap();
     let tumor = matches.value_of("tumor").unwrap();
     let candidates = matches.value_of("candidates").unwrap_or("-");
@@ -33,6 +34,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
     let tumor_sample = libprosic::Sample::new(
         tumor_bam,
         pileup_window,
+        !no_fragment_evidence,
         libprosic::InsertSize {
             mean: tumor_mean_insert_size,
             sd: tumor_sd_insert_size
@@ -53,6 +55,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Syn
     let normal_sample = libprosic::Sample::new(
         normal_bam,
         pileup_window,
+        !no_fragment_evidence,
         libprosic::InsertSize {
             mean: normal_mean_insert_size,
             sd: normal_sd_insert_size

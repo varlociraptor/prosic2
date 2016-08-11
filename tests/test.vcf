@@ -1,0 +1,100 @@
+##fileformat=VCFv4.0
+##FILTER=<ID=PASS,Description="All filters passed">
+##fileDate=2016-03-17
+##source=Platypus_Version_0.7.9.5
+##platypusOptions={'assemblyRegionSize': 1500, 'trimReadFlank': 0, 'assembleBadReads': 1, 'bamFiles': ['bams/HCC1187C-vs-HCC1187BL/tumor.bam', 'bams/HCC1187C-vs-HCC1187BL/normal.bam'], 'minVarDist': 9, 'trimSoftClipped': 1, 'minReads': 2, 'qualBinSize': 1, 'refFile': '../../data/ref/hg19.ucsc.fa', 'maxHaplotypes': 50, 'filterVarsByCoverage': 1, 'maxSize': 1500, 'originalMaxHaplotypes': 50, 'skipDifficultWindows': 0, 'parseNCBI': 0, 'skipRegionsFile': None, 'noCycles': 0, 'trimAdapter': 1, 'minPosterior': 5, 'assembleAll': 1, 'trimOverlapping': 1, 'filterDuplicates': 1, 'abThreshold': 0.001, 'minFlank': 10, 'bufferSize': 100000, 'fileCaching': 0, 'useEMLikelihoods': 0, 'coverageSamplingLevel': 30, 'calculateFlankScore': 0, 'logFileName': 'logs/platypus/HCC1187C-vs-HCC1187BL.assemble.log', 'nCPU': 12, 'filterReadsWithUnmappedMates': 1, 'qdThreshold': 10, 'maxVariants': 8, 'scThreshold': 0.95, 'filterReadsWithDistantMates': 1, 'maxReads': 10000000.0, 'badReadsWindow': 11, 'genIndels': 1, 'largeWindows': 0, 'minMapQual': 20, 'maxVarDist': 15, 'maxGOF': 30, 'rlen': 150, 'minGoodQualBases': 20, 'refCallBlockSize': 1000, 'countOnlyExactIndelMatches': 0, 'longHaps': 0, 'HLATyping': 0, 'filterReadPairsWithSmallInserts': 1, 'minBaseQual': 20, 'getVariantsFromBAMs': 1, 'genSNPs': 1, 'assemble': 1, 'assemblerKmerSize': 15, 'minVarFreq': 0.05, 'alignScoreFile': '', 'verbosity': 2, 'sourceFile': None, 'compressReads': 0, 'rmsmqThreshold': 40, 'filteredReadsFrac': 0.7, 'outputRefCalls': 0, 'badReadsThreshold': 15, 'hapScoreThreshold': 4, 'regions': None, 'sbThreshold': 0.001, 'output': 'platypus/HCC1187C-vs-HCC1187BL.assemble.vcf', 'assembleBrokenPairs': 0, 'mergeClusteredVariants': 1, 'maxGenotypes': 1275, 'nInd': 2}
+##INFO=<ID=FR,Number=.,Type=Float,Description="Estimated population frequency of variant">
+##INFO=<ID=MMLQ,Number=1,Type=Float,Description="Median minimum base quality for bases around variant">
+##INFO=<ID=TCR,Number=1,Type=Integer,Description="Total reverse strand coverage at this locus">
+##INFO=<ID=HP,Number=1,Type=Integer,Description="Homopolymer run length around variant locus">
+##INFO=<ID=WE,Number=1,Type=Integer,Description="End position of calling window">
+##INFO=<ID=Source,Number=.,Type=String,Description="Was this variant suggested by Playtypus, Assembler, or from a VCF?">
+##INFO=<ID=FS,Number=.,Type=Float,Description="Fisher's exact test for strand bias (Phred scale)">
+##INFO=<ID=WS,Number=1,Type=Integer,Description="Starting position of calling window">
+##INFO=<ID=PP,Number=.,Type=Float,Description="Posterior probability (phred scaled) that this variant segregates">
+##INFO=<ID=TR,Number=.,Type=Integer,Description="Total number of reads containing this variant">
+##INFO=<ID=NF,Number=.,Type=Integer,Description="Total number of forward reads containing this variant">
+##INFO=<ID=TCF,Number=1,Type=Integer,Description="Total forward strand coverage at this locus">
+##INFO=<ID=NR,Number=.,Type=Integer,Description="Total number of reverse reads containing this variant">
+##INFO=<ID=TC,Number=1,Type=Integer,Description="Total coverage at this locus">
+##INFO=<ID=END,Number=.,Type=Integer,Description="End position of reference call block">
+##INFO=<ID=MGOF,Number=.,Type=Integer,Description="Worst goodness-of-fit value reported across all samples">
+##INFO=<ID=SbPval,Number=.,Type=Float,Description="Binomial P-value for strand bias test">
+##INFO=<ID=START,Number=.,Type=Integer,Description="Start position of reference call block">
+##INFO=<ID=ReadPosRankSum,Number=.,Type=Float,Description="Mann-Whitney Rank sum test for difference between in positions of variants in reads from ref and alt">
+##INFO=<ID=MQ,Number=.,Type=Float,Description="Root mean square of mapping qualities of reads at the variant position">
+##INFO=<ID=QD,Number=1,Type=Float,Description="Variant-quality/read-depth for this variant">
+##INFO=<ID=SC,Number=1,Type=String,Description="Genomic sequence 10 bases either side of variant position">
+##INFO=<ID=BRF,Number=1,Type=Float,Description="Fraction of reads around this variant that failed filters">
+##INFO=<ID=HapScore,Number=.,Type=Integer,Description="Haplotype score measuring the number of haplotypes the variant is segregating into in a window">
+##INFO=<ID=Size,Number=.,Type=Integer,Description="Size of reference call block">
+##FILTER=<ID=GOF,Description="Variant fails goodness-of-fit test.">
+##FILTER=<ID=badReads,Description="Variant supported only by reads with low quality bases close to variant position, and not present on both strands.">
+##FILTER=<ID=alleleBias,Description="Variant frequency is lower than expected for het">
+##FILTER=<ID=hp10,Description="Flanking sequence contains homopolymer of length 10 or greater">
+##FILTER=<ID=Q20,Description="Variant quality is below 20.">
+##FILTER=<ID=HapScore,Description="Too many haplotypes are supported by the data in this region.">
+##FILTER=<ID=MQ,Description="Root-mean-square mapping quality across calling region is low.">
+##FILTER=<ID=strandBias,Description="Variant fails strand-bias filter">
+##FILTER=<ID=SC,Description="Variants fail sequence-context filter. Surrounding sequence is low-complexity">
+##FILTER=<ID=QualDepth,Description="Variant quality/Read depth ratio is low.">
+##FILTER=<ID=REFCALL,Description="This line represents a homozygous reference call">
+##FILTER=<ID=QD,Description="Variants fail quality/depth filter.">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Unphased genotypes">
+##FORMAT=<ID=GQ,Number=.,Type=Integer,Description="Genotype quality as phred score">
+##FORMAT=<ID=GOF,Number=.,Type=Float,Description="Goodness of fit value">
+##FORMAT=<ID=NR,Number=.,Type=Integer,Description="Number of reads covering variant location in this sample">
+##FORMAT=<ID=GL,Number=.,Type=Float,Description="Genotype log10-likelihoods for AA,AB and BB genotypes, where A = ref and B = variant. Only applicable for bi-allelic sites">
+##FORMAT=<ID=NV,Number=.,Type=Integer,Description="Number of reads containing variant in this sample">
+##contig=<ID=chr1>
+##contig=<ID=chr2>
+##contig=<ID=chr3>
+##contig=<ID=chr4>
+##contig=<ID=chr5>
+##contig=<ID=chr6>
+##contig=<ID=chr7>
+##contig=<ID=chr8>
+##contig=<ID=chr9>
+##contig=<ID=chr10>
+##contig=<ID=chr11>
+##contig=<ID=chr12>
+##contig=<ID=chr13>
+##contig=<ID=chr14>
+##contig=<ID=chr15>
+##contig=<ID=chr16>
+##contig=<ID=chr17>
+##contig=<ID=chr18>
+##contig=<ID=chr19>
+##contig=<ID=chr20>
+##contig=<ID=chr21>
+##contig=<ID=chr22>
+##contig=<ID=chrX>
+##contig=<ID=chrY>
+##bcftools_annotateVersion=1.3+htslib-1.3
+##bcftools_annotateCommand=annotate -o platypus-fixed/HCC1187C-vs-HCC1187BL.orig.assemble.vcf -h resources/contigs.txt platypus/HCC1187C-vs-HCC1187BL.orig.assemble.vcf
+##bcftools_viewVersion=1.3+htslib-1.3
+##bcftools_viewCommand=view platypus-fixed/HCC1187C-vs-HCC1187BL.orig.assemble.vcf
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HCC1187BL	HCC1187C
+chr1	10291	.	C	T	12	SC;badReads;MQ;Q20	BRF=0.99;FR=0.5;HP=3;HapScore=2;MGOF=84;MMLQ=8;MQ=5.85;NF=0;NR=3;PP=12;QD=15.5904;SC=ACCCTAACCCCAACCCCAACC;SbPval=0.03;Source=Platypus;TC=10;TCF=7;TCR=3;TR=3;WE=10299;WS=10281	GT:GL:GOF:GQ:NR:NV	0/1:-2.6,0,-8.6:84:26:4:1	0/1:-3.22,0,-2.52:45:24:6:2
+chr1	10321	.	C	T	122	SC;badReads;MQ	BRF=0.99;FR=0.5;HP=3;HapScore=4;MGOF=82;MMLQ=7;MQ=6.52;NF=4;NR=0;PP=122;QD=39.1928;SC=ACCCCAACCCCAACCCTAACC;SbPval=1;Source=Platypus;TC=12;TCF=9;TCR=3;TR=4;WE=10338;WS=10311	GT:GL:GOF:GQ:NR:NV	0/1:-1.5,0,-7.5:82:15:4:0	0/1:-4.77,0,-12.67:51:48:8:4
+chr1	10330	.	C	CAA	164	badReads;MQ	BRF=0.99;FR=0.5;HP=3;HapScore=4;MGOF=82;MMLQ=30;MQ=7;NF=8;NR=0;PP=164;QD=22.375;SC=CCAACCCTAACCCCTAACCCT;SbPval=1;Source=Platypus;TC=12;TCF=9;TCR=3;TR=8;WE=10338;WS=10311	GT:GL:GOF:GQ:NR:NV	0/1:-7.15,0,-8.29:82:71:4:3	0/1:-7.17,0,-22.17:51:72:8:5
+chr1	10352	.	T	TA	140	badReads;HapScore;MQ	BRF=0.98;FR=0.5003;HP=3;HapScore=8;MGOF=99;MMLQ=24;MQ=8.37;NF=10;NR=0;PP=140;QD=15;SC=ACCCTAACCCTACCCTAACCC;SbPval=1;Source=Platypus;TC=17;TCF=14;TCR=3;TR=10;WE=10362;WS=10342	GT:GL:GOF:GQ:NR:NV	1/0:-6.77,0,-3.16:99:32:6:4	0/1:-4.94,0,-7.03:54:49:11:6
+chr1	10353	.	A	AAC	33	badReads;HapScore;MQ;QD	BRF=0.98;FR=0.4979;HP=3;HapScore=8;MGOF=99;MMLQ=24;MQ=8.42;NF=10;NR=0;PP=33;QD=4.3;SC=CCCTAACCCTACCCTAACCCT;SbPval=1;Source=Platypus;TC=17;TCF=17;TCR=0;TR=10;WE=10362;WS=10342	GT:GL:GOF:GQ:NR:NV	./.:0,-0.07,-11.2:99:3:7:4	1/0:-0.71,0,-11.66:54:8:10:6
+chr1	10383	.	A	AC	5	Q20;badReads;HapScore;MQ;QD	BRF=0.97;FR=0.2456;HP=3;HapScore=6;MGOF=94;MMLQ=26;MQ=9.24;NF=12;NR=0;PP=5;QD=1.25;SC=CCTAACCCTAACCCTAACCCC;SbPval=1;Source=Platypus;TC=21;TCF=21;TCR=0;TR=12;WE=10409;WS=10373	GT:GL:GOF:GQ:NR:NV	0/0:0,-7.07,-18.73:94:71:9:5	1/0:-1.76,0,-12.85:67:18:12:7
+chr1	10390	.	CCCCTAACCCCT	ACCCTGACCCTA	181	badReads;HapScore;MQ	BRF=0.97;FR=0.25;HP=3;HapScore=6;MGOF=94;MMLQ=23;MQ=9.59;NF=3;NR=0;PP=181;QD=84.8226;SC=CTAACCCTAACCCCTAACCCC;SbPval=1;Source=Platypus;TC=21;TCF=21;TCR=0;TR=3;WE=10409;WS=10373	GT:GL:GOF:GQ:NR:NV	1/0:-25.94,0,-35.41:94:99:9:3	0/0:0,-5.15,-71.32:67:52:12:0
+chr1	10427	.	A	AC	416	badReads;HapScore;MQ	BRF=0.87;FR=0.5003;HP=3;HapScore=14;MGOF=46;MMLQ=7;MQ=13.03;NF=10;NR=5;PP=416;QD=28.4;SC=CCTAACCCTAACCCTAACCCT;SbPval=0.49;Source=Platypus;TC=30;TCF=21;TCR=9;TR=15;WE=10448;WS=10417	GT:GL:GOF:GQ:NR:NV	1/0:-2.72,0,-14.41:46:27:12:6	1/0:-12.67,0,-0.22:14:4:18:9
+chr1	10437	.	TAAC	CTAA	532	badReads;HapScore;MQ	BRF=0.87;FR=0.5;HP=3;HapScore=14;MGOF=46;MMLQ=29;MQ=20.41;NF=12;NR=5;PP=532;QD=35.0275;SC=ACCCTAACCCTAACCCCTAAC;SbPval=0.86;Source=Platypus;TC=58;TCF=34;TCR=24;TR=17;WE=10448;WS=10417	GT:GL:GOF:GQ:NR:NV	0/1:-13.67,0,-11.2:46:99:22:4	0/1:-37.51,0,-12.69:14:99:36:13
+chr1	10439	.	AC	A	136	badReads;HapScore;MQ	BRF=0.87;FR=0.25;HP=4;HapScore=14;MGOF=51;MMLQ=10;MQ=20.53;NF=7;NR=7;PP=136;QD=10.4286;SC=CCTAACCCTAACCCCTAACCC;SbPval=0.75;Source=Platypus;TC=51;TCF=27;TCR=24;TR=14;WE=10448;WS=10417	GT:GL:GOF:GQ:NR:NV	0/0:0,-0.87,-15.05:51:9:17:6	0/1:-29.16,0,-15.05:17:99:34:8
+chr1	10583	.	G	A	151	MQ;QD;alleleBias	BRF=0.68;FR=0.4999;HP=1;HapScore=1;MGOF=7;MMLQ=24;MQ=38.56;NF=12;NR=7;PP=151;QD=9.77743;SC=CCCTCGCGGTGCTCTCCGGGT;SbPval=0.6;Source=Platypus,Assembler;TC=102;TCF=64;TCR=38;TR=19;WE=10591;WS=10573	GT:GL:GOF:GQ:NR:NV	1/0:-3.5,0,-92.4:7:35:43:5	1/0:-16.27,0,-111.17:7:99:59:14
+chr1	10622	.	TT	GC	383	badReads;HapScore;MQ	BRF=0.91;FR=0.9989;HP=1;HapScore=8;MGOF=4;MMLQ=16;MQ=9.22;NF=0;NR=5;PP=383;QD=87.2936;SC=AACTCCGCCGTTGCAAAGGCG;SbPval=1;Source=Platypus;TC=6;TCF=1;TCR=5;TR=5;WE=10635;WS=10612	GT:GL:GOF:GQ:NR:NV	1/1:-11.1,-0.1,0:2:4:2:2	1/1:-21.06,-0.3,0:4:5:4:3
+chr1	10625	.	C	CAGGCGCAG	405	badReads;HapScore;MQ	BRF=0.91;FR=0.7071;HP=3;HapScore=8;MGOF=4;MMLQ=16;MQ=9.14;NF=0;NR=5;PP=405;QD=101;SC=TCCGCCGTTGCAAAGGCGCGC;SbPval=1;Source=Platypus;TC=6;TCF=1;TCR=5;TR=5;WE=10635;WS=10612	GT:GL:GOF:GQ:NR:NV	1/1:-16.4,-0.1,0:2:4:2:2	0/1:-24.6,0,-6.3:4:63:4:3
+chr1	10627	.	A	G	275	badReads;HapScore;MQ	BRF=0.91;FR=0.7071;HP=2;HapScore=8;MGOF=4;MMLQ=16;MQ=9.11;NF=0;NR=5;PP=275;QD=61.9542;SC=CGCCGTTGCAAAGGCGCGCCG;SbPval=1;Source=Platypus;TC=6;TCF=1;TCR=5;TR=5;WE=10635;WS=10612	GT:GL:GOF:GQ:NR:NV	1/1:-6.2,-0.1,0:2:4:2:2	0/1:-8.4,0,-3.9:4:39:4:3
+chr1	10745	.	G	C	104	badReads;MQ	BRF=0.98;FR=0.9998;HP=1;HapScore=2;MGOF=198;MMLQ=31;MQ=16.95;NF=1;NR=1;PP=104;QD=69.3856;SC=GGCGCAGAGAGGCGCGCCGCG;SbPval=0.74;Source=Platypus;TC=2;TCF=1;TCR=1;TR=2;WE=10753;WS=10735	GT:GL:GOF:GQ:NR:NV	./.:-10.4,-0.6,0:198:7:1:1	./.:-3.5,0,-0:68:3:1:1
+chr1	10774	.	G	C	86	badReads;MQ	BRF=0.9;FR=0.9998;HP=1;HapScore=2;MGOF=216;MMLQ=18;MQ=30.65;NF=1;NR=1;PP=86;QD=60.3856;SC=GGCGCAGAGAGGCGCGCCGCG;SbPval=0.74;Source=Platypus;TC=2;TCF=1;TCR=1;TR=2;WE=10782;WS=10764	GT:GL:GOF:GQ:NR:NV	./.:-8.6,-0.6,0:216:7:1:1	./.:-3.5,0,-0:68:3:1:1
+chr1	12783	.	G	A	1761	badReads;MQ	BRF=0.89;FR=0.5;HP=1;HapScore=1;MGOF=3;MMLQ=32;MQ=14.43;NF=61;NR=0;PP=1761;QD=29.4389;SC=CGGGGCCGGCGTCTCCTGTCT;SbPval=1;Source=Platypus,Assembler;TC=97;TCF=97;TCR=0;TR=61;WE=12791;WS=12773	GT:GL:GOF:GQ:NR:NV	1/0:-79.96,0,-40.36:2:99:44:26	1/0:-100.85,0,-38.15:3:99:53:35
+chr1	13116	.	TGA	GGG	2947	MQ	BRF=0.51;FR=0.5;HP=2;HapScore=1;MGOF=4;MMLQ=36;MQ=27.52;NF=0;NR=68;PP=2947;QD=20;SC=AAGAGGAAAGTGAGGTTGCCT;SbPval=1;Source=Platypus,Assembler;TC=178;TCF=59;TCR=119;TR=68;WE=13126;WS=13100	GT:GL:GOF:GQ:NR:NV	1/0:-240.12,0,-266.12:4:99:76:34	1/0:-225.61,0,-300:3:99:102:34
+chr1	13273	.	G	C	283	MQ;alleleBias	BRF=0.63;FR=0.25;HP=1;HapScore=1;MGOF=8;MMLQ=35;MQ=27.41;NF=7;NR=8;PP=283;QD=21.1847;SC=TCCTGGACCAGTGATACACCC;SbPval=0.38;Source=Platypus,Assembler;TC=192;TCF=117;TCR=75;TR=15;WE=13281;WS=13263	GT:GL:GOF:GQ:NR:NV	1/0:-32.77,0,-188.67:5:99:75:15	0/0:0,-35.14,-300:8:99:117:0
+chr1	13302	.	C	T	510	MQ;alleleBias	BRF=0.49;FR=0.5;HP=1;HapScore=1;MGOF=6;MMLQ=33;MQ=35.92;NF=23;NR=7;PP=510;QD=18.159;SC=GTCCTGGACACGCTGTTGGCC;SbPval=0.02;Source=Platypus,Assembler;TC=175;TCF=86;TCR=89;TR=30;WE=13310;WS=13292	GT:GL:GOF:GQ:NR:NV	0/1:-18.93,0,-182.13:6:99:68:11	0/1:-36.79,0,-267.29:4:99:107:19
+chr1	13418	.	G	A	173	badReads;MQ;alleleBias	BRF=0.7;FR=0.25;HP=4;HapScore=1;MGOF=2;MMLQ=35;MQ=19.06;NF=12;NR=5;PP=173;QD=12.2218;SC=CCACCACCCCGAGATCACATT;SbPval=0.97;Source=Platypus,Assembler;TC=140;TCF=62;TCR=78;TR=17;WE=13426;WS=13407	GT:GL:GOF:GQ:NR:NV	1/0:-20.47,0,-101.2:2:99:47:10	0/0:0,-4.49,-268.5:1:45:93:7
+chr1	13649	.	G	C	172	MQ;QD;alleleBias	BRF=0.69;FR=0.2501;HP=1;HapScore=1;MGOF=5;MMLQ=27;MQ=21.42;NF=11;NR=10;PP=172;QD=9.84625;SC=GTGCCCGTTGGAGAAAACAGG;SbPval=0.34;Source=Platypus,Assembler;TC=151;TCF=87;TCR=64;TR=21;WE=13657;WS=13639	GT:GL:GOF:GQ:NR:NV	0/0:0,-3.05,-142.6:5:31:55:4	1/0:-21.68,0,-215.08:5:99:96:17
+chr1	13868	.	A	G	451	MQ;alleleBias	BRF=0.68;FR=0.5;HP=2;HapScore=1;MGOF=4;MMLQ=34;MQ=20.52;NF=17;NR=18;PP=451;QD=13.8792;SC=TATAATAACTAAAGTTAGCTG;SbPval=0.46;Source=Platypus,Assembler;TC=271;TCF=141;TCR=130;TR=35;WE=13876;WS=13858	GT:GL:GOF:GQ:NR:NV	0/1:-28.8,0,-280.5:4:99:106:15	0/1:-20.94,0,-300:4:99:165:20

@@ -75,9 +75,12 @@ subcommands:
             long: pileup-window
             value_name: INT
             help: Window to investigate for evidence left and right of each variant [2500].
-        - no-fragment-evidence:
-            long: no-fragment-evidence
-            help: Disable usage of fragment evidence (insert size parameters will be ignored).
+        - omit-fragment-evidence:
+            long: omit-fragment-evidence
+            help: Omit evidence consisting of read pairs with unexpected insert size (insert size parameters will be ignored).
+        - omit-secondary-alignments:
+            long: omit-secondary-alignments
+            help: Omit secondary alignments.
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:

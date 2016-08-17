@@ -6,7 +6,7 @@ use csv;
 
 use libprosic::estimation::effective_mutation_rate;
 
-pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Error+Send+Sync>> {
+pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let min_af = value_t!(matches, "min-af", f64).unwrap_or(0.12);
     let max_af = value_t!(matches, "max-af", f64).unwrap_or(0.25);
     let mut reader = csv::Reader::from_reader(io::stdin());

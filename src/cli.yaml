@@ -94,8 +94,7 @@ subcommands:
             short: F
             value_name: FLOAT
             help: Maximum allele frequency to consider [0.25].
-        - observations:
-            long: obs
-            short: o
+        - fit:
+            long: fit
             value_name: FILE
-            help: Path to file that will contain the observed frequencies.
+            help: Path to file that will observations and the parameters of the fitted model as JSON.

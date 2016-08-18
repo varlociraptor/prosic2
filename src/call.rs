@@ -30,7 +30,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
         s + tumor_bam.header.target_len(tid).unwrap() as u64
     });
-
+    
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(
         tumor_bam,

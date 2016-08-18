@@ -68,12 +68,12 @@ fn main() {
 
     if let Some(matches) = matches.subcommand_matches("tumor-normal") {
         if let Err(e) = call::tumor_normal(matches) {
-            error!("{}", e);
+            error!("Error: {}", e);
             process::exit(1);
         }
     } else if let Some(matches) = matches.subcommand_matches("estimate-mutation-rate") {
         if let Err(e) = estimate::effective_mutation_rate(matches) {
-            error!("{}", e);
+            error!("Error: {}", e);
             process::exit(1);
         }
     }

@@ -25,12 +25,12 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let candidates = matches.value_of("candidates").unwrap_or("-");
     let output = matches.value_of("output").unwrap_or("-");
 
-    let tumor_bam = bam::IndexedReader::new(&tumor).expect(&format!("Error reading BAM file {}.", tumor));
-    let normal_bam = bam::IndexedReader::new(&normal).expect(&format!("Error reading BAM file {}.", normal));
+    let tumor_bam = try!(bam::IndexedReader::new(&tumor));
+    let normal_bam = try!(bam::IndexedReader::new(&normal));
     let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
         s + tumor_bam.header.target_len(tid).unwrap() as u64
     });
-    
+
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(
         tumor_bam,

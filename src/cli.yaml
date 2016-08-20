@@ -109,3 +109,8 @@ subcommands:
             short: e
             multiple: true
             help: Event to consider. Multiple allowed.
+        - output:
+            long: output
+            short: o
+            value_name: FILE
+            help: BCF file that shall contain the results (if omitted, write to STDOUT).

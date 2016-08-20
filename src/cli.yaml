@@ -98,3 +98,14 @@ subcommands:
             long: fit
             value_name: FILE
             help: Path to file that will observations and the parameters of the fitted model as JSON.
+  - estimate-fdr:
+      about: Estimate the expected false discovery rate for mutation events. Prints an annotated BCF to STDOUT.
+      args:
+        - calls:
+            required: true
+            help: Calls as provided by prosic tumor-normal.
+        - event:
+            long: event
+            short: e
+            multiple: true
+            help: Event to consider. Multiple allowed.

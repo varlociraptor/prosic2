@@ -17,6 +17,7 @@ extern crate rustc_serialize;
 
 extern crate libprosic;
 extern crate rust_htslib;
+extern crate bio;
 
 #[cfg(feature="flame_it")]
 use std::fs::File;

@@ -2,12 +2,13 @@ use std::io;
 use std::error::Error;
 use std::io::prelude::*;
 use std::fs::File;
-use rustc_serialize::json;
 
+use rustc_serialize::json;
 use clap;
 use csv;
 
 use libprosic::estimation::effective_mutation_rate;
+use libprosic::model::AlleleFreq;
 
 
 pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
@@ -15,7 +16,7 @@ pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Err
     let max_af = value_t!(matches, "max-af", f64).unwrap_or(0.25);
     let mut reader = csv::Reader::from_reader(io::stdin());
     let freqs = try!(reader.decode().collect::<Result<Vec<f64>, _>>());
-    let estimate = effective_mutation_rate::estimate(freqs.into_iter().filter(|&f| f >= min_af && f <= max_af));
+    let estimate = effective_mutation_rate::estimate(freqs.into_iter().filter(|&f| f >= min_af && f <= max_af).map(|f| AlleleFreq(f)));
 
     // print estimated mutation rate to stdout
     println!("{}", estimate.effective_mutation_rate());

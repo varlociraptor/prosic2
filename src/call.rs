@@ -67,7 +67,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         deletion_factor,
         insertion_factor,
         genome_size,
-        tumor_purity,
         normal_heterozygosity
     );
 

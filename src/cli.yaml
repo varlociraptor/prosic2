@@ -75,6 +75,12 @@ subcommands:
             long: pileup-window
             value_name: INT
             help: Window to investigate for evidence left and right of each variant [2500].
+        - omit-snvs:
+            long: omit-snvs
+            help: Don't call SNVs.
+        - omit-indels:
+            long: omit-indels
+            help: Don't call indels.
         - omit-fragment-evidence:
             long: omit-fragment-evidence
             help: Omit evidence consisting of read pairs with unexpected insert size (insert size parameters will be ignored).

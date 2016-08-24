@@ -27,7 +27,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let tumor = matches.value_of("tumor").unwrap();
     let candidates = matches.value_of("candidates").unwrap_or("-");
     let output = matches.value_of("output").unwrap_or("-");
-    let observations = matches.value_of("Observations");
+    let observations = matches.value_of("observations");
 
     let tumor_bam = try!(bam::IndexedReader::new(&tumor));
     let normal_bam = try!(bam::IndexedReader::new(&normal));

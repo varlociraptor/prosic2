@@ -90,7 +90,7 @@ subcommands:
         - observations:
             long: obs
             value_name: FILE
-            help: Optional path where read observations shall be written to. The resulting file contains a line for each variant, with two tab-separated columns for each allele. The first column contains the JSON encoded observations for the case, the second for the control sample.
+            help: Optional path where read observations shall be written to. The resulting file contains a line for each observation with tab-separated values.
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:

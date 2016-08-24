@@ -1,10 +1,18 @@
 name: prosic
 author: Johannes Köster <johannes.koester@tu-dortmund.de>, Louis Dijkstra
 about: "A caller for somatic indels in tumor-normal pairs."
+
+settings:
+    - SubcommandRequired
+
+global_settings:
+    - ColoredHelp
+
 args:
   - verbose:
       short: v
       help: Provide verbose output.
+
 subcommands:
   - tumor-normal:
       about: Call somatic and germline variants from a tumor-normal sample pair and a VCF/BCF with candidate variants.

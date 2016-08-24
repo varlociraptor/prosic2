@@ -25,6 +25,7 @@ subcommands:
             help: BAM file with reads from normal sample.
         - candidates:
             long: candidates
+            short: c
             value_name: FILE
             help: VCF/BCF file to process (if omitted, read from STDIN).
         - output:
@@ -34,33 +35,40 @@ subcommands:
             help: BCF file that shall contain the results (if omitted, write to STDOUT).
         - insert-size-mean:
             long: isize-mean
+            short: m
             value_name: FLOAT
             required: true
             help: Mean of sample insert size.
         - insert-size-sd:
             long: isize-sd
+            short: s
             required: true
             value_name: FLOAT
             help: Standard deviation of sample insert size.
         - effective-mutation-rate:
             long: effmut
+            short: e
             required: true
             value_name: FLOAT
             help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
         - deletion-factor:
             long: deletion-factor
+            short: d
             value_name: FLOAT
             help: Factor of deletion mutation rate relative to SNV mutation rate [0.03 according to Hodkinson et al. Nature Reviews Genetics 2011].
         - insertion-factor:
             long: insertion-factor
+            short: i
             value_name: FLOAT
             help: Factor of insertion mutation rate relative to SNV mutation rate [0.01 according to Hodkinson et al. Nature Reviews Genetics 2011].
         - ploidy:
             long: ploidy
+            short: p
             value_name: INT
             help: Average ploidy of tumor and normal sample [2].
         - purity:
             long: purity
+            short: a
             value_name: FLOAT
             help: Purity of tumor sample [1.0].
         - normal-insert-size-mean:

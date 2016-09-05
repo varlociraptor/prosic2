@@ -29,6 +29,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let candidates = matches.value_of("candidates").unwrap_or("-");
     let output = matches.value_of("output").unwrap_or("-");
     let observations = matches.value_of("observations");
+    let flat_priors = matches.is_present("flat-priors");
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
     let prob_missed_insertion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-insertion-alignment", f64).unwrap_or(0.0)));
@@ -75,23 +76,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_spurious_indel_alignment
     );
 
-
-    let prior_model = libprosic::priors::TumorNormalModel::new(
-        ploidy,
-        tumor_effective_mutation_rate,
-        deletion_factor,
-        insertion_factor,
-        genome_size,
-        normal_heterozygosity
-    );
-
-    // init joint model
-    let mut joint_model = libprosic::model::PairModel::new(
-        tumor_sample,
-        normal_sample,
-        prior_model
-    );
-
     // setup events
     let events = [
         libprosic::call::pairwise::PairEvent {
@@ -108,22 +92,68 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // call absent variants as the complement of the other events
     let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
 
-    // perform calling
-    libprosic::call::pairwise::call::<
-        _, _, _,
-        libprosic::model::PairModel<
-            libprosic::model::ContinuousAlleleFreqs,
-            libprosic::model::DiscreteAlleleFreqs,
-            libprosic::model::priors::TumorNormalModel
-        >, _, _, _>
-    (
-        &candidates,
-        &output,
-        &events,
-        Some(&absent_event),
-        &mut joint_model,
-        omit_snvs,
-        omit_indels,
-        observations.as_ref()
-    )
+    if !flat_priors {
+        let prior_model = libprosic::priors::TumorNormalModel::new(
+            ploidy,
+            tumor_effective_mutation_rate,
+            deletion_factor,
+            insertion_factor,
+            genome_size,
+            normal_heterozygosity
+        );
+
+        // init joint model
+        let mut joint_model = libprosic::model::PairModel::new(
+            tumor_sample,
+            normal_sample,
+            prior_model
+        );
+
+        // perform calling
+        libprosic::call::pairwise::call::<
+            _, _, _,
+            libprosic::model::PairModel<
+                libprosic::model::ContinuousAlleleFreqs,
+                libprosic::model::DiscreteAlleleFreqs,
+                libprosic::model::priors::TumorNormalModel
+            >, _, _, _>
+        (
+            &candidates,
+            &output,
+            &events,
+            Some(&absent_event),
+            &mut joint_model,
+            omit_snvs,
+            omit_indels,
+            observations.as_ref()
+        )
+    } else {
+        let prior_model = libprosic::priors::FlatTumorNormalModel::new(ploidy);
+
+        // init joint model
+        let mut joint_model = libprosic::model::PairModel::new(
+            tumor_sample,
+            normal_sample,
+            prior_model
+        );
+
+        // perform calling
+        libprosic::call::pairwise::call::<
+            _, _, _,
+            libprosic::model::PairModel<
+                libprosic::model::ContinuousAlleleFreqs,
+                libprosic::model::DiscreteAlleleFreqs,
+                libprosic::model::priors::FlatTumorNormalModel
+            >, _, _, _>
+        (
+            &candidates,
+            &output,
+            &events,
+            Some(&absent_event),
+            &mut joint_model,
+            omit_snvs,
+            omit_indels,
+            observations.as_ref()
+        )
+    }
 }

@@ -126,6 +126,9 @@ subcommands:
             long: obs
             value_name: FILE
             help: Optional path where read observations shall be written to. The resulting file contains a line for each observation with tab-separated values.
+        - flat-priors:
+            long: flat-priors
+            help: Ignore the prior model and use flat priors instead.
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:

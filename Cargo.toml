@@ -7,7 +7,7 @@ authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 libprosic = { git = "https://github.com/prosic/libprosic" }
 clap = {version = "2.10.*", features = ["yaml", "color", "suggestions"]}
 rust-htslib = "0.8.*"
-bio = "0.9.*"
+bio = { git = "https://github.com/rust-bio/rust-bio" } #"0.9.*"
 log = "0.3.*"
 fern = "0.3.*"
 csv = "0.14.*"

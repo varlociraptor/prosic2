@@ -4,6 +4,7 @@ use clap;
 use libprosic;
 use libprosic::model::AlleleFreq;
 use rust_htslib::bam;
+use bio::stats::Prob;
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // read command line parameters
@@ -11,7 +12,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let tumor_sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
     let normal_mean_insert_size = value_t!(matches, "normal-insert-size-mean", f64).unwrap_or(tumor_mean_insert_size);
     let normal_sd_insert_size = value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_sd_insert_size);
-    let normal_heterozygosity = value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4);
+    let normal_heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4)));
     let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
     let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
     let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap_or(0.03);
@@ -29,6 +30,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let output = matches.value_of("output").unwrap_or("-");
     let observations = matches.value_of("observations");
 
+    let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
+    let prob_missed_insertion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-insertion-alignment", f64).unwrap_or(0.0)));
+    let prob_missed_deletion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-deletion-alignment", f64).unwrap_or(0.0)));
+    let prob_spurious_indel_alignment = try!(Prob::checked(value_t!(matches, "prob-spurious-indel-alignment", f64).unwrap_or(0.0)));
+
     let tumor_bam = try!(bam::IndexedReader::new(&tumor));
     let normal_bam = try!(bam::IndexedReader::new(&normal));
     let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
@@ -45,7 +51,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             mean: tumor_mean_insert_size,
             sd: tumor_sd_insert_size
         },
-        libprosic::likelihood::LatentVariableModel::new(tumor_purity)
+        libprosic::likelihood::LatentVariableModel::new(tumor_purity),
+        prob_spurious_isize,
+        prob_missed_insertion_alignment,
+        prob_missed_deletion_alignment,
+        prob_spurious_indel_alignment
     );
 
     // init normal sample
@@ -58,7 +68,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             mean: normal_mean_insert_size,
             sd: normal_sd_insert_size
         },
-        libprosic::likelihood::LatentVariableModel::new(1.0)
+        libprosic::likelihood::LatentVariableModel::new(1.0),
+        prob_spurious_isize,
+        prob_missed_insertion_alignment,
+        prob_missed_deletion_alignment,
+        prob_spurious_indel_alignment
     );
 
 
@@ -72,7 +86,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     );
 
     // init joint model
-    let mut joint_model = libprosic::model::ContinuousVsDiscreteModel::new(
+    let mut joint_model = libprosic::model::PairModel::new(
         tumor_sample,
         normal_sample,
         prior_model
@@ -80,12 +94,12 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 
     // setup events
     let events = [
-        libprosic::case_control::CaseControlEvent {
+        libprosic::call::pairwise::PairEvent {
             name: "germline".to_owned(),
             af_case: AlleleFreq(0.0)..AlleleFreq(1.0),
             af_control: vec![AlleleFreq(0.5), AlleleFreq(1.0)]
         },
-        libprosic::case_control::CaseControlEvent {
+        libprosic::call::pairwise::PairEvent {
             name: "somatic".to_owned(),
             af_case: min_somatic_af..AlleleFreq(1.0),
             af_control: vec![AlleleFreq(0.0)]
@@ -95,7 +109,14 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
 
     // perform calling
-    try!(libprosic::case_control::call(
+    libprosic::call::pairwise::call::<
+        _, _, _,
+        libprosic::model::PairModel<
+            libprosic::model::ContinuousAlleleFreqs,
+            libprosic::model::DiscreteAlleleFreqs,
+            libprosic::model::priors::TumorNormalModel
+        >, _, _, _>
+    (
         &candidates,
         &output,
         &events,
@@ -104,7 +125,5 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         omit_snvs,
         omit_indels,
         observations.as_ref()
-    ));
-
-    Ok(())
+    )
 }

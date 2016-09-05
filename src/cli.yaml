@@ -47,7 +47,6 @@ subcommands:
             help: Standard deviation of sample insert size.
         - effective-mutation-rate:
             long: effmut
-            short: e
             required: true
             value_name: FLOAT
             help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
@@ -86,19 +85,23 @@ subcommands:
         - prob-spurious-isize:
             long: spurious-isize-rate
             short: r
-            help: Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0].
+            value_name: FLOAT
+            help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0]."
         - prob-missed-insertion-alignment:
             long: missed-insertion-rate
             short: E
-            help: Rate of missed insertion alignments if insertion is present (should be set depending on mapper, BWA: 0.2138, LASER: 0.3460) [0.0].
+            value_name: FLOAT
+            help: "Rate of missed insertion alignments if insertion is present (should be set depending on mapper, BWA: 0.2138, LASER: 0.3460) [0.0]."
         - prob-missed-deletion-alignment:
             long: missed-deletion-rate
             short: e
-            help: Rate of missed deletion alignments if deletion is present (should be set depending on mapper, BWA: 0.0310, LASER: 0.0964) [0.0].
+            value_name: FLOAT
+            help: "Rate of missed deletion alignments if deletion is present (should be set depending on mapper, BWA: 0.0310, LASER: 0.0964) [0.0]."
         - prob-spurious-indel-alignment:
             long: spurious-indel-rate
             short: y
-            help: Rate of spurious indel alignments if indel is absent (should be set depending on mapper, BWA: 0.00001, LASER: 0.00001) [0.0].
+            value_name: FLOAT
+            help: "Rate of spurious indel alignments if indel is absent (should be set depending on mapper, BWA: 0.00001, LASER: 0.00001) [0.0]."
         - min-somatic-af:
             long: min-somatic-af
             value_name: FLOAT

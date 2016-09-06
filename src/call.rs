@@ -36,6 +36,9 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let prob_missed_deletion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-deletion-alignment", f64).unwrap_or(0.0)));
     let prob_spurious_indel_alignment = try!(Prob::checked(value_t!(matches, "prob-spurious-indel-alignment", f64).unwrap_or(0.0)));
 
+    let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
+    let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
+
     let tumor_bam = try!(bam::IndexedReader::new(&tumor));
     let normal_bam = try!(bam::IndexedReader::new(&normal));
     let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
@@ -57,7 +60,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_missed_insertion_alignment,
         prob_missed_deletion_alignment,
         prob_spurious_indel_alignment
-    );
+    ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
 
     // init normal sample
     let normal_sample = libprosic::Sample::new(
@@ -74,7 +77,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_missed_insertion_alignment,
         prob_missed_deletion_alignment,
         prob_spurious_indel_alignment
-    );
+    ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
 
     // setup events
     let events = [

@@ -129,6 +129,12 @@ subcommands:
         - flat-priors:
             long: flat-priors
             help: Ignore the prior model and use flat priors instead.
+        - max-indel-dist:
+            long: max-indel-dist
+            help: Maximum distance of indel in read to candidate indel in order to be considered a match.
+        - max-indel-len-diff:
+            long: max-indel-len-diff
+            help: Maximum absolute difference of indel lenght in read to candidate indel in order to be considered a match.
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:

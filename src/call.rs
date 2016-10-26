@@ -38,6 +38,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 
     let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
     let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
+    let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
 
     let tumor_bam = try!(bam::IndexedReader::new(&tumor));
     let normal_bam = try!(bam::IndexedReader::new(&normal));
@@ -128,6 +129,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             &mut joint_model,
             omit_snvs,
             omit_indels,
+            Some(max_indel_len),
             observations.as_ref()
         )
     } else {
@@ -156,6 +158,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             &mut joint_model,
             omit_snvs,
             omit_indels,
+            Some(max_indel_len),
             observations.as_ref()
         )
     }

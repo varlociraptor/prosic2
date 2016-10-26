@@ -137,6 +137,10 @@ subcommands:
             long: max-indel-len-diff
             value_name: INT
             help: Maximum absolute difference of indel lenght in read to candidate indel in order to be considered a match.
+        - max-indel-len:
+            long: max-indel-len
+            value_name: INT
+            help: Omit longer indels when calling [1000].
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
       args:

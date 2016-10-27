@@ -22,6 +22,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let no_secondary = matches.is_present("omit-secondary-alignments");
+    let no_mapq = matches.is_present("omit-mapq");
     let omit_snvs = matches.is_present("omit-snvs");
     let omit_indels = matches.is_present("omit-indels");
     let normal = matches.value_of("normal").unwrap();
@@ -52,6 +53,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         pileup_window,
         !no_fragment_evidence,
         !no_secondary,
+        !no_mapq,
         libprosic::InsertSize {
             mean: tumor_mean_insert_size,
             sd: tumor_sd_insert_size
@@ -69,6 +71,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         pileup_window,
         !no_fragment_evidence,
         !no_secondary,
+        !no_mapq,
         libprosic::InsertSize {
             mean: normal_mean_insert_size,
             sd: normal_sd_insert_size

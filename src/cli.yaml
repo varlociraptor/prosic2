@@ -122,6 +122,9 @@ subcommands:
         - omit-secondary-alignments:
             long: omit-secondary-alignments
             help: Omit secondary alignments.
+        - omit-mapq:
+            long: omit-mapq
+            help: Omit mapping quality (all alignments are trusted).
         - observations:
             long: obs
             value_name: FILE

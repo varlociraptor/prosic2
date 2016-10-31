@@ -80,6 +80,11 @@ fn main() {
             error!("Error: {}", e);
             process::exit(1);
         }
+    } else if let Some(matches) = matches.subcommand_matches("control-fdr") {
+        if let Err(e) = estimate::fdr_bh(matches) {
+            error!("Error: {}", e);
+            process::exit(1);
+        }
     }
 
     write_flamegraph();

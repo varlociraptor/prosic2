@@ -7,10 +7,12 @@ use rustc_serialize::json;
 use clap;
 use csv;
 use itertools::Itertools;
+use rust_htslib::bcf;
 
 use libprosic;
 use libprosic::model::AlleleFreq;
 use libprosic::estimation;
+use libprosic::model;
 
 pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let min_af = value_t!(matches, "min-af", f64).unwrap_or(0.12);
@@ -54,6 +56,37 @@ pub fn fdr(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     }).collect_vec();
 
     try!(estimation::fdr::annotate(&inbcf, &outbcf, &events));
+
+    Ok(())
+}
+
+
+pub fn fdr_bh(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
+    let call_bcf = matches.value_of("calls").unwrap();
+    let null_bcf = matches.value_of("null-calls").unwrap();
+    let event = matches.value_of("event").unwrap();
+    let vartype = matches.value_of("vartype").unwrap();
+    let vartype = match (vartype, value_t!(matches, "min-len", u32).ok(), value_t!(matches, "max-len", u32).ok()) {
+        ("SNV", _, _) => model::VariantType::SNV,
+        ("INS", Some(min_len), Some(max_len)) => model::VariantType::Insertion(Some(min_len..max_len)),
+        ("DEL", Some(min_len), Some(max_len)) => model::VariantType::Deletion(Some(min_len..max_len)),
+        ("INS", _, _) => model::VariantType::Insertion(None),
+        ("DEL", _, _) => model::VariantType::Deletion(None),
+        _ => {
+            return Err(Box::new(clap::Error {
+                message: "unsupported variant type (supported: SNV, INS, DEL)".to_owned(),
+                kind: clap::ErrorKind::InvalidValue,
+                info: None
+            }));
+        }
+    };
+
+    let mut call_reader = try!(bcf::Reader::new(&call_bcf));
+    let mut null_reader = try!(bcf::Reader::new(&null_bcf));
+    let mut writer = io::stdout();
+    let event = DummyEvent { name: event.to_owned() };
+
+    try!(estimation::fdr_bh::control_fdr(&mut call_reader, &mut null_reader, &mut writer, &event, &vartype));
 
     Ok(())
 }

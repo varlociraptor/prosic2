@@ -177,3 +177,26 @@ subcommands:
             short: o
             value_name: FILE
             help: BCF file that shall contain the results (if omitted, write to STDOUT).
+  - control-fdr:
+      about: Print thresholds for controlling the FDR at different levels.
+      args:
+        - calls:
+            required: true
+            help: Calls as provided by prosic tumor-normal.
+        - null-calls:
+            required: true
+            help: Null model calls as provided by prosic tumor-normal, e.g. when flipping tumor and normal sample.
+        - event:
+            long: event
+            short: e
+            help: Event to consider.
+        - vartype:
+            long: var
+            required: true
+            help: Variant type to consider (SNV, INS, DEL).
+        - min-len:
+            long: min-len
+            help: Minimum indel length to consider.
+        - max-len:
+            long: max-len
+            help: Maximum indel length to consider (exclusive).

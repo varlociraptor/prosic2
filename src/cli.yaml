@@ -170,6 +170,7 @@ subcommands:
         - event:
             long: event
             short: e
+            value_name: STRING
             multiple: true
             help: Event to consider. Multiple allowed.
         - output:
@@ -189,14 +190,18 @@ subcommands:
         - event:
             long: event
             short: e
+            value_name: STRING
             help: Event to consider.
         - vartype:
             long: var
+            value_name: STRING
             required: true
             help: Variant type to consider (SNV, INS, DEL).
         - min-len:
             long: min-len
+            value_name: INT
             help: Minimum indel length to consider.
         - max-len:
             long: max-len
+            value_name: INT
             help: Maximum indel length to consider (exclusive).

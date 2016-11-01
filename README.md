@@ -38,7 +38,7 @@ Second, the FDR (here for somatic deletions) can be controlled by
 
 The resulting tab-separated table `thresholds.txt` contains thresholds that can be applied to the corresponding `PROB_SOMATIC` field in `prosic-calls.bcf`, in order to control the FDR at different levels.
 
-# Author
+# Authors
 
-Original model: [Louis Dijkstra](https://github.com/louisdijkstra)
-Extended model and implementation: [Johannes Köster](https://johanneskoester.bitbucket.org)
+* Original model: [Louis Dijkstra](https://github.com/louisdijkstra)
+* Extended model and implementation: [Johannes Köster](https://johanneskoester.bitbucket.org)

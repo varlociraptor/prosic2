@@ -47,9 +47,8 @@ subcommands:
             help: Standard deviation of sample insert size.
         - effective-mutation-rate:
             long: effmut
-            required: true
             value_name: FLOAT
-            help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
+            help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs, ignored if --flat-priors).
         - deletion-factor:
             long: deletion-factor
             short: d
@@ -81,7 +80,7 @@ subcommands:
         - heterozygosity:
             long: het
             value_name: FLOAT
-            help: Expected heterozygosity of normal sample [1.25E-4].
+            help: Expected heterozygosity of normal sample (ignored if --flat-priors) [1.25E-4].
         - prob-spurious-isize:
             long: spurious-isize-rate
             short: r

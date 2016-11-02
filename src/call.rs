@@ -14,7 +14,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let normal_sd_insert_size = value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_sd_insert_size);
     let normal_heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4)));
     let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
-    let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
+    let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap_or(2000.0);
     let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap_or(0.03);
     let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap_or(0.01);
     let tumor_purity = value_t!(matches, "purity", f64).unwrap_or(1.0);

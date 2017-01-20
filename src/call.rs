@@ -248,7 +248,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
 
     if !flat_priors {
-        panic!("only flat priors are supported for now");
+        panic!("only flat priors are supported for now (use --flat-priors)");
     } else {
         let prior_model = libprosic::priors::FlatNormalNormalModel::new(ploidy);
 

@@ -65,12 +65,12 @@ fn main() {
         panic!("Failed to initialize logger: {}", e);
     }
 
-    if let Some(matches) = matches.subcommand_matches("tumor-normal") {
+    if let Some(matches) = matches.subcommand_matches("call-tumor-normal") {
         if let Err(e) = call::tumor_normal(matches) {
             error!("Error: {}", e);
             process::exit(1);
         }
-    } else if let Some(matches) = matches.subcommand_matches("normal-normal") {
+    } else if let Some(matches) = matches.subcommand_matches("call-normal-normal") {
         if let Err(e) = call::normal_normal(matches) {
             error!("Error: {}", e);
             process::exit(1);

@@ -23,6 +23,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let no_secondary = matches.is_present("omit-secondary-alignments");
     let no_mapq = matches.is_present("omit-mapq");
+    let adjust_mapq = matches.is_present("adjust-mapq");
     let omit_snvs = matches.is_present("omit-snvs");
     let omit_indels = matches.is_present("omit-indels");
     let normal = matches.value_of("normal").unwrap();
@@ -54,6 +55,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         !no_fragment_evidence,
         !no_secondary,
         !no_mapq,
+        adjust_mapq,
         libprosic::InsertSize {
             mean: tumor_mean_insert_size,
             sd: tumor_sd_insert_size
@@ -72,6 +74,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         !no_fragment_evidence,
         !no_secondary,
         !no_mapq,
+        adjust_mapq,
         libprosic::InsertSize {
             mean: normal_mean_insert_size,
             sd: normal_sd_insert_size
@@ -110,7 +113,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         );
 
         // init joint model
-        let mut joint_model = libprosic::model::PairModel::new(
+        let mut joint_model = libprosic::model::PairCaller::new(
             tumor_sample,
             normal_sample,
             prior_model
@@ -119,7 +122,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         // perform calling
         libprosic::call::pairwise::call::<
             _, _, _,
-            libprosic::model::PairModel<
+            libprosic::model::PairCaller<
                 libprosic::model::ContinuousAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::TumorNormalModel
@@ -139,7 +142,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         let prior_model = libprosic::priors::FlatTumorNormalModel::new(ploidy);
 
         // init joint model
-        let mut joint_model = libprosic::model::PairModel::new(
+        let mut joint_model = libprosic::model::PairCaller::new(
             tumor_sample,
             normal_sample,
             prior_model
@@ -148,7 +151,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         // perform calling
         libprosic::call::pairwise::call::<
             _, _, _,
-            libprosic::model::PairModel<
+            libprosic::model::PairCaller<
                 libprosic::model::ContinuousAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::FlatTumorNormalModel
@@ -178,6 +181,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let no_secondary = matches.is_present("omit-secondary-alignments");
     let no_mapq = matches.is_present("omit-mapq");
+    let adjust_mapq = matches.is_present("adjust-mapq");
     let omit_snvs = matches.is_present("omit-snvs");
     let omit_indels = matches.is_present("omit-indels");
     let first = matches.value_of("first").unwrap();
@@ -214,6 +218,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             !no_fragment_evidence,
             !no_secondary,
             !no_mapq,
+            adjust_mapq,
             insert_size,
             libprosic::likelihood::LatentVariableModel::new(1.0),
             prob_spurious_isize,
@@ -253,7 +258,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         let prior_model = libprosic::priors::FlatNormalNormalModel::new(ploidy);
 
         // init joint model
-        let mut joint_model = libprosic::model::PairModel::new(
+        let mut joint_model = libprosic::model::PairCaller::new(
             first_sample,
             second_sample,
             prior_model
@@ -262,7 +267,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         // perform calling
         libprosic::call::pairwise::call::<
             _, _, _,
-            libprosic::model::PairModel<
+            libprosic::model::PairCaller<
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::FlatNormalNormalModel

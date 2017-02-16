@@ -81,6 +81,9 @@ subcommands:
             long: het
             value_name: FLOAT
             help: Expected heterozygosity of normal sample (ignored if --flat-priors) [1.25E-4].
+        - adjust-mapq:
+            long: adjust-mapq
+            help: Downgrade mapping quality of alignments supporting an indel if there are no fragments supporting the same indel. Such cases are more likely to be alignment/repeat artifacts.
         - prob-spurious-isize:
             long: spurious-isize-rate
             short: r
@@ -184,6 +187,9 @@ subcommands:
             long: het
             value_name: FLOAT
             help: Expected heterozygosity of normal sample (ignored if --flat-priors) [1.25E-4].
+        - adjust-mapq:
+            long: adjust-mapq
+            help: Downgrade mapping quality of alignments supporting an indel if there are no fragments supporting the same indel. Such cases are more likely to be alignment/repeat artifacts.
         - prob-spurious-isize:
             long: spurious-isize-rate
             short: r

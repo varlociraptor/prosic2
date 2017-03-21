@@ -23,6 +23,9 @@ subcommands:
         - normal:
             required: true
             help: BAM file with reads from normal sample.
+        - reference:
+            required: true
+            help: FASTA file with reference genome. Has to be indexed with samtools faidx.
         - candidates:
             long: candidates
             short: c
@@ -89,21 +92,6 @@ subcommands:
             short: r
             value_name: FLOAT
             help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0]."
-        - prob-missed-insertion-alignment:
-            long: missed-insertion-rate
-            short: E
-            value_name: FLOAT
-            help: "Rate of missed insertion alignments if insertion is present (should be set depending on mapper, BWA: 0.2138, LASER: 0.3460) [0.0]."
-        - prob-missed-deletion-alignment:
-            long: missed-deletion-rate
-            short: e
-            value_name: FLOAT
-            help: "Rate of missed deletion alignments if deletion is present (should be set depending on mapper, BWA: 0.0310, LASER: 0.0964) [0.0]."
-        - prob-spurious-indel-alignment:
-            long: spurious-indel-rate
-            short: y
-            value_name: FLOAT
-            help: "Rate of spurious indel alignments if indel is absent (should be set depending on mapper, BWA: 0.00001, LASER: 0.00001) [0.0]."
         - min-somatic-af:
             long: min-somatic-af
             value_name: FLOAT
@@ -156,6 +144,9 @@ subcommands:
         - second:
             required: true
             help: BAM file with reads from normal sample.
+        - reference:
+            required: true
+            help: FASTA file with reference genome. Has to be indexed with samtools faidx.
         - candidates:
             long: candidates
             short: c
@@ -195,21 +186,6 @@ subcommands:
             short: r
             value_name: FLOAT
             help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0]."
-        - prob-missed-insertion-alignment:
-            long: missed-insertion-rate
-            short: E
-            value_name: FLOAT
-            help: "Rate of missed insertion alignments if insertion is present (should be set depending on mapper, BWA: 0.2138, LASER: 0.3460) [0.0]."
-        - prob-missed-deletion-alignment:
-            long: missed-deletion-rate
-            short: e
-            value_name: FLOAT
-            help: "Rate of missed deletion alignments if deletion is present (should be set depending on mapper, BWA: 0.0310, LASER: 0.0964) [0.0]."
-        - prob-spurious-indel-alignment:
-            long: spurious-indel-rate
-            short: y
-            value_name: FLOAT
-            help: "Rate of spurious indel alignments if indel is absent (should be set depending on mapper, BWA: 0.00001, LASER: 0.00001) [0.0]."
         - pileup-window:
             long: pileup-window
             value_name: INT
@@ -266,6 +242,7 @@ subcommands:
             long: fit
             value_name: FILE
             help: Path to file that will observations and the parameters of the fitted model as JSON.
+
   - estimate-fdr:
       about: Estimate the expected false discovery rate for mutation events. Prints an annotated BCF to STDOUT.
       args:
@@ -283,6 +260,7 @@ subcommands:
             short: o
             value_name: FILE
             help: BCF file that shall contain the results (if omitted, write to STDOUT).
+            
   - control-fdr:
       about: Print thresholds for controlling the FDR at different levels.
       args:

@@ -30,13 +30,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let tumor = matches.value_of("tumor").unwrap();
     let candidates = matches.value_of("candidates").unwrap_or("-");
     let output = matches.value_of("output").unwrap_or("-");
+    let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
-    let prob_missed_insertion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-insertion-alignment", f64).unwrap_or(0.0)));
-    let prob_missed_deletion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-deletion-alignment", f64).unwrap_or(0.0)));
-    let prob_spurious_indel_alignment = try!(Prob::checked(value_t!(matches, "prob-spurious-indel-alignment", f64).unwrap_or(0.0)));
 
     let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
     let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
@@ -61,10 +59,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: tumor_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
-        prob_spurious_isize,
-        prob_missed_insertion_alignment,
-        prob_missed_deletion_alignment,
-        prob_spurious_indel_alignment
+        prob_spurious_isize
     ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
 
     // init normal sample
@@ -80,10 +75,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: normal_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(1.0),
-        prob_spurious_isize,
-        prob_missed_insertion_alignment,
-        prob_missed_deletion_alignment,
-        prob_spurious_indel_alignment
+        prob_spurious_isize
     ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
 
     // setup events
@@ -126,10 +118,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::ContinuousAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::TumorNormalModel
-            >, _, _, _>
+            >, _, _, _, _>
         (
             &candidates,
             &output,
+            &reference,
             &events,
             Some(&absent_event),
             &mut joint_model,
@@ -155,10 +148,11 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::ContinuousAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::FlatTumorNormalModel
-            >, _, _, _>
+            >, _, _, _, _>
         (
             &candidates,
             &output,
+            &reference,
             &events,
             Some(&absent_event),
             &mut joint_model,
@@ -188,13 +182,11 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let second = matches.value_of("second").unwrap();
     let candidates = matches.value_of("candidates").unwrap_or("-");
     let output = matches.value_of("output").unwrap_or("-");
+    let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
-    let prob_missed_insertion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-insertion-alignment", f64).unwrap_or(0.0)));
-    let prob_missed_deletion_alignment = try!(Prob::checked(value_t!(matches, "prob-missed-deletion-alignment", f64).unwrap_or(0.0)));
-    let prob_spurious_indel_alignment = try!(Prob::checked(value_t!(matches, "prob-spurious-indel-alignment", f64).unwrap_or(0.0)));
 
     let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
     let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
@@ -222,9 +214,6 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             insert_size,
             libprosic::likelihood::LatentVariableModel::new(1.0),
             prob_spurious_isize,
-            prob_missed_insertion_alignment,
-            prob_missed_deletion_alignment,
-            prob_spurious_indel_alignment
         ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff)
     };
 
@@ -271,10 +260,11 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::DiscreteAlleleFreqs,
                 libprosic::model::priors::FlatNormalNormalModel
-            >, _, _, _>
+            >, _, _, _, _>
         (
             &candidates,
             &output,
+            &reference,
             &events,
             Some(&absent_event),
             &mut joint_model,

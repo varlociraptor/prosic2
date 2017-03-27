@@ -134,6 +134,9 @@ subcommands:
             long: max-indel-len
             value_name: INT
             help: Omit longer indels when calling [1000].
+        - exclusive-end:
+            long: exclusive-end
+            help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
 
   - call-normal-normal:
       about: Call variants from a normal sample pair and a VCF/BCF with candidate variants.
@@ -224,6 +227,9 @@ subcommands:
             long: max-indel-len
             value_name: INT
             help: Omit longer indels when calling [1000].
+        - exclusive-end:
+            long: exclusive-end
+            help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
 
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.
@@ -260,7 +266,7 @@ subcommands:
             short: o
             value_name: FILE
             help: BCF file that shall contain the results (if omitted, write to STDOUT).
-            
+
   - control-fdr:
       about: Print thresholds for controlling the FDR at different levels.
       args:

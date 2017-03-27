@@ -33,6 +33,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
+    let exclusive_end = matches.is_present("exclusive_end");
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
 
@@ -129,7 +130,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             omit_snvs,
             omit_indels,
             Some(max_indel_len),
-            observations.as_ref()
+            observations.as_ref(),
+            exclusive_end
         )
     } else {
         let prior_model = libprosic::priors::FlatTumorNormalModel::new(ploidy);
@@ -159,7 +161,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             omit_snvs,
             omit_indels,
             Some(max_indel_len),
-            observations.as_ref()
+            observations.as_ref(),
+            exclusive_end
         )
     }
 }
@@ -185,6 +188,7 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
+    let exclusive_end = matches.is_present("exclusive_end");
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
 
@@ -271,7 +275,8 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             omit_snvs,
             omit_indels,
             Some(max_indel_len),
-            observations.as_ref()
+            observations.as_ref(),
+            exclusive_end
         )
     }
 }

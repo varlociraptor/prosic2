@@ -32,8 +32,13 @@ Issue `prosic tumor-normal --help` for information about additional parameters.
 
 ### Step 2: Controlling FDR
 
-To control the FDR, you first have to create a null-model by applying prosic `call-tumor-normal` (Step 1) with swapped tumor and normal bams.
-Assuming these calls are stored in `null-calls.bcf`, the FDR (here for somatic deletions) can be controlled by
+To control the FDR, you first have to create a null-model by swapping tumor and normal bams.
+In case of a general purpose caller like Delly, you can use the same `vcf` of preliminary calls. With callers like lancet, you have to create a vcf with swapped samples.
+Then, you apply prosic `call-tumor-normal` (Step 1) with swapped tumor and normal bams, i.e.
+
+    $ prosic call-tumor-normal --flat-priors normal.bam tumor.bam < null-pre-calls.vcf > null-calls.bcf
+
+Finally the FDR (here for somatic deletions) can be controlled by
 
 	$ prosic control-fdr --event SOMATIC --var DEL < null-calls.bcf > thresholds.tsv
 

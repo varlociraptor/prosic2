@@ -25,18 +25,24 @@ Then, calling with PROSIC consists of two steps.
 
 Variants are called by applying PROSIC to the preliminary calls, i.e.
 
-    $ prosic tumor-normal tumor.bam normal.bam < pre-calls.vcf > prosic-calls.bcf
+    $ prosic call-tumor-normal --flat-priors tumor.bam normal.bam < pre-calls.vcf > prosic-calls.bcf
 
 PROSIC then annotates the initial calls with probabilities for the events somatic, germline and absent (`PROB_SOMATIC`, `PROB_GERMLINE`, `PROB_ABSENT`).
 Issue `prosic tumor-normal --help` for information about additional parameters.
 
 ### Step 2: Controlling FDR
 
-Second, the FDR (here for somatic deletions) can be controlled by
+To control the FDR, you first have to create a null-model by swapping tumor and normal bams.
+In case of a general purpose caller like Delly, you can use the same `vcf` of preliminary calls. With callers like lancet, you have to create a vcf with swapped samples.
+Then, you apply prosic `call-tumor-normal` (Step 1) with swapped tumor and normal bams, i.e.
 
-	$ prosic control-fdr --event SOMATIC --var DEL < prosic-calls.bcf > thresholds.txt
+    $ prosic call-tumor-normal --flat-priors normal.bam tumor.bam < null-pre-calls.vcf > null-calls.bcf
 
-The resulting tab-separated table `thresholds.txt` contains thresholds that can be applied to the corresponding `PROB_SOMATIC` field in `prosic-calls.bcf`, in order to control the FDR at different levels.
+Finally the FDR (here for somatic deletions) can be controlled by
+
+	$ prosic control-fdr --event SOMATIC --var DEL < null-calls.bcf > thresholds.tsv
+
+The resulting tab-separated table `thresholds.tsv` contains thresholds that can be applied to the corresponding `PROB_SOMATIC` field in `prosic-calls.bcf`, in order to control the FDR at different levels.
 
 # Authors
 

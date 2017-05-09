@@ -242,39 +242,25 @@ subcommands:
             value_name: FILE
             help: Path to file that will observations and the parameters of the fitted model as JSON.
 
-  - estimate-fdr:
-      about: Print thresholds for controlling the expected FDR (Mueller et al. 2006) at different levels.
-      args:
-        - calls:
-            required: true
-            help: Calls as provided by prosic tumor-normal.
-        - event:
-            long: event
-            short: e
-            value_name: STRING
-            help: Event to consider.
-        - vartype:
-            long: var
-            value_name: STRING
-            required: true
-            help: Variant type to consider (SNV, INS, DEL).
-        - min-len:
-            long: min-len
-            value_name: INT
-            help: Minimum indel length to consider.
-        - max-len:
-            long: max-len
-            value_name: INT
-            help: Maximum indel length to consider (exclusive).
-
   - control-fdr:
       about: Print thresholds for controlling the FDR at different levels using Benjamini-Hochberg over p-values generated from an empirical null distribution of posterior error probabilities.
       args:
         - calls:
             required: true
             help: Calls as provided by prosic tumor-normal.
-        - null-calls:
+        - method:
             required: true
+            long: method
+            value_name: STRING
+            possible_values:
+              - bh
+              - ev
+            help: |
+              Method to use. If bh, use Benjamini-Hochberg over p-values generated from an empirical null distribution of posterior error probabilities (--null-calls is required in this case).
+              If ev, calculate the expected FDR over posterior error probabilities as presented by Mueller et al. 2006.
+        - null-calls:
+            value_name: FILE
+            long: null-calls
             help: Null model calls as provided by prosic tumor-normal, e.g. when flipping tumor and normal sample.
         - event:
             long: event

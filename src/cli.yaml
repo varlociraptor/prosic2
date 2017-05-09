@@ -243,7 +243,7 @@ subcommands:
             help: Path to file that will observations and the parameters of the fitted model as JSON.
 
   - estimate-fdr:
-      about: Estimate the expected false discovery rate for mutation events. Prints an annotated BCF to STDOUT.
+      about: Print thresholds for controlling the expected FDR (Mueller et al. 2006) at different levels.
       args:
         - calls:
             required: true
@@ -252,16 +252,23 @@ subcommands:
             long: event
             short: e
             value_name: STRING
-            multiple: true
-            help: Event to consider. Multiple allowed.
-        - output:
-            long: output
-            short: o
-            value_name: FILE
-            help: BCF file that shall contain the results (if omitted, write to STDOUT).
+            help: Event to consider.
+        - vartype:
+            long: var
+            value_name: STRING
+            required: true
+            help: Variant type to consider (SNV, INS, DEL).
+        - min-len:
+            long: min-len
+            value_name: INT
+            help: Minimum indel length to consider.
+        - max-len:
+            long: max-len
+            value_name: INT
+            help: Maximum indel length to consider (exclusive).
 
   - control-fdr:
-      about: Print thresholds for controlling the FDR at different levels.
+      about: Print thresholds for controlling the FDR at different levels using Benjamini-Hochberg over p-values generated from an empirical null distribution of posterior error probabilities.
       args:
         - calls:
             required: true

@@ -122,14 +122,6 @@ subcommands:
         - flat-priors:
             long: flat-priors
             help: Ignore the prior model and use flat priors instead.
-        - max-indel-dist:
-            long: max-indel-dist
-            value_name: INT
-            help: Maximum distance of indel in read to candidate indel in order to be considered a match.
-        - max-indel-len-diff:
-            long: max-indel-len-diff
-            value_name: INT
-            help: Maximum absolute difference of indel lenght in read to candidate indel in order to be considered a match.
         - max-indel-len:
             long: max-indel-len
             value_name: INT
@@ -137,6 +129,10 @@ subcommands:
         - exclusive-end:
             long: exclusive-end
             help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
+        - max-indel-overlap:
+            long: max-indel-overlap
+            value_name: INT
+            help: When considering read evidence for an indel, omit alignments that overlap more than the given value. The default value ensures fair sampling of reads supporting alternative and reference allele. Choosing a too large overlap results in biases towards the reference allele, because of too low MAPQs and unmapped reads [25].
 
   - call-normal-normal:
       about: Call variants from a normal sample pair and a VCF/BCF with candidate variants.
@@ -215,14 +211,6 @@ subcommands:
         - flat-priors:
             long: flat-priors
             help: Ignore the prior model and use flat priors instead.
-        - max-indel-dist:
-            long: max-indel-dist
-            value_name: INT
-            help: Maximum distance of indel in read to candidate indel in order to be considered a match.
-        - max-indel-len-diff:
-            long: max-indel-len-diff
-            value_name: INT
-            help: Maximum absolute difference of indel lenght in read to candidate indel in order to be considered a match.
         - max-indel-len:
             long: max-indel-len
             value_name: INT
@@ -230,6 +218,11 @@ subcommands:
         - exclusive-end:
             long: exclusive-end
             help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
+        - max-indel-overlap:
+            long: max-indel-overlap
+            value_name: INT
+            help: When considering read evidence for an indel, omit alignments that overlap more than the given value. The default value ensures fair sampling of reads supporting alternative and reference allele. Choosing a too large overlap results in biases towards the reference allele, because of too low MAPQs and unmapped reads [25].
+
 
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.

@@ -6,6 +6,12 @@ use libprosic::model::AlleleFreq;
 use rust_htslib::bam;
 use bio::stats::Prob;
 
+
+fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
+    arg.map_or(None, |f| if f == "-" { None } else { Some(f) })
+}
+
+
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // read command line parameters
     let tumor_mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
@@ -28,21 +34,20 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let omit_indels = matches.is_present("omit-indels");
     let normal = matches.value_of("normal").unwrap();
     let tumor = matches.value_of("tumor").unwrap();
-    let candidates = matches.value_of("candidates").unwrap_or("-");
-    let output = matches.value_of("output").unwrap_or("-");
+    let candidates = path_or_pipe(matches.value_of("candidates"));
+    let output = path_or_pipe(matches.value_of("output"));
     let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
+    let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
 
-    let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
-    let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
     let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
 
-    let tumor_bam = try!(bam::IndexedReader::new(&tumor));
-    let normal_bam = try!(bam::IndexedReader::new(&normal));
+    let tumor_bam = bam::IndexedReader::from_path(&tumor)?;
+    let normal_bam = bam::IndexedReader::from_path(&normal)?;
     let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
         s + tumor_bam.header.target_len(tid).unwrap() as u64
     });
@@ -60,8 +65,9 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: tumor_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
-        prob_spurious_isize
-    ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
+        prob_spurious_isize,
+        max_indel_overlap,
+    );
 
     // init normal sample
     let normal_sample = libprosic::Sample::new(
@@ -76,8 +82,9 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: normal_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(1.0),
-        prob_spurious_isize
-    ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff);
+        prob_spurious_isize,
+        max_indel_overlap,
+    );
 
     // setup events
     let events = [
@@ -121,8 +128,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::priors::TumorNormalModel
             >, _, _, _, _>
         (
-            &candidates,
-            &output,
+            candidates,
+            output,
             &reference,
             &events,
             Some(&absent_event),
@@ -152,8 +159,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::priors::FlatTumorNormalModel
             >, _, _, _, _>
         (
-            &candidates,
-            &output,
+            candidates,
+            output,
             &reference,
             &events,
             Some(&absent_event),
@@ -183,21 +190,20 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let omit_indels = matches.is_present("omit-indels");
     let first = matches.value_of("first").unwrap();
     let second = matches.value_of("second").unwrap();
-    let candidates = matches.value_of("candidates").unwrap_or("-");
-    let output = matches.value_of("output").unwrap_or("-");
+    let candidates = path_or_pipe(matches.value_of("candidates"));
+    let output = path_or_pipe(matches.value_of("output"));
     let reference = matches.value_of("reference").unwrap();
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
+    let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
 
-    let max_indel_dist = value_t!(matches, "max-indel-dist", u32).unwrap_or(50);
-    let max_indel_len_diff = value_t!(matches, "max-indel-len-diff", u32).unwrap_or(20);
     let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
 
-    let first_bam = try!(bam::IndexedReader::new(&first));
-    let second_bam = try!(bam::IndexedReader::new(&second));
+    let first_bam = try!(bam::IndexedReader::from_path(&first));
+    let second_bam = try!(bam::IndexedReader::from_path(&second));
     let genome_size = (0..first_bam.header.target_count()).fold(0, |s, tid| {
         s + first_bam.header.target_len(tid).unwrap() as u64
     });
@@ -218,7 +224,8 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             insert_size,
             libprosic::likelihood::LatentVariableModel::new(1.0),
             prob_spurious_isize,
-        ).max_indel_dist(max_indel_dist).max_indel_len_diff(max_indel_len_diff)
+            max_indel_overlap,
+        )
     };
 
     let first_sample = init_sample(first_bam);
@@ -266,8 +273,8 @@ pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
                 libprosic::model::priors::FlatNormalNormalModel
             >, _, _, _, _>
         (
-            &candidates,
-            &output,
+            candidates,
+            output,
             &reference,
             &events,
             Some(&absent_event),

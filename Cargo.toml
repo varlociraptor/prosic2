@@ -1,12 +1,12 @@
 [package]
 name = "prosic"
-version = "2.0.0"
+version = "2.1.0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = {git = "https://github.com/prosic/libprosic.git", branch = "pseudo_haplotype_likelihood"}
+libprosic = "0.3.*"
 clap = {version = "2.10.*", features = ["yaml", "color", "suggestions"]}
-rust-htslib = "0.9.*"
+rust-htslib = "0.11.*"
 bio = "0.10.*"
 log = "0.3.*"
 fern = "0.3.*"

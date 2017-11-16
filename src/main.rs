@@ -70,11 +70,6 @@ fn main() {
             error!("Error: {}", e);
             process::exit(1);
         }
-    } else if let Some(matches) = matches.subcommand_matches("call-normal-normal") {
-        if let Err(e) = call::normal_normal(matches) {
-            error!("Error: {}", e);
-            process::exit(1);
-        }
     } else if let Some(matches) = matches.subcommand_matches("estimate-mutation-rate") {
         if let Err(e) = estimate::effective_mutation_rate(matches) {
             error!("Error: {}", e);

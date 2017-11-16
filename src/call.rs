@@ -41,8 +41,13 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
     let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
+    let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap_or(10);
 
     let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
+    let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
+    let prob_spurious_del = Prob::checked(value_t_or_exit!(matches, "prob-spurious-del", f64))?;
+    let prob_ins_extend = Prob::checked(value_t_or_exit!(matches, "prob-ins-extend", f64))?;
+    let prob_del_extend = Prob::checked(value_t_or_exit!(matches, "prob-del-extend", f64))?;
 
     let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
 
@@ -66,7 +71,12 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         },
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
         prob_spurious_isize,
+        prob_spurious_ins,
+        prob_spurious_del,
+        prob_ins_extend,
+        prob_del_extend,
         max_indel_overlap,
+        indel_haplotype_window
     );
 
     // init normal sample
@@ -83,7 +93,12 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         },
         libprosic::likelihood::LatentVariableModel::new(1.0),
         prob_spurious_isize,
+        prob_spurious_ins,
+        prob_spurious_del,
+        prob_ins_extend,
+        prob_del_extend,
         max_indel_overlap,
+        indel_haplotype_window
     );
 
     // setup events
@@ -97,10 +112,13 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             name: "somatic".to_owned(),
             af_case: min_somatic_af..AlleleFreq(1.0),
             af_control: vec![AlleleFreq(0.0)]
+        },
+        libprosic::call::pairwise::PairEvent {
+            name: "absent".to_owned(),
+            af_case: AlleleFreq(0.0)..AlleleFreq(0.0),
+            af_control: vec![AlleleFreq(0.0)]
         }
     ];
-    // call absent variants as the complement of the other events
-    let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
 
     if !flat_priors {
         let prior_model = libprosic::priors::TumorNormalModel::new(
@@ -132,7 +150,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             output,
             &reference,
             &events,
-            Some(&absent_event),
             &mut joint_model,
             omit_snvs,
             omit_indels,
@@ -163,7 +180,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             output,
             &reference,
             &events,
-            Some(&absent_event),
             &mut joint_model,
             omit_snvs,
             omit_indels,
@@ -175,115 +191,3 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 }
 
 
-pub fn normal_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    // read command line parameters
-    let mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
-    let sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
-    let heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4)));
-    let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
-    let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
-    let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
-    let no_secondary = matches.is_present("omit-secondary-alignments");
-    let no_mapq = matches.is_present("omit-mapq");
-    let adjust_mapq = matches.is_present("adjust-mapq");
-    let omit_snvs = matches.is_present("omit-snvs");
-    let omit_indels = matches.is_present("omit-indels");
-    let first = matches.value_of("first").unwrap();
-    let second = matches.value_of("second").unwrap();
-    let candidates = path_or_pipe(matches.value_of("candidates"));
-    let output = path_or_pipe(matches.value_of("output"));
-    let reference = matches.value_of("reference").unwrap();
-    let observations = matches.value_of("observations");
-    let flat_priors = matches.is_present("flat-priors");
-    let exclusive_end = matches.is_present("exclusive-end");
-    let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
-
-    let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
-
-    let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
-
-    let first_bam = try!(bam::IndexedReader::from_path(&first));
-    let second_bam = try!(bam::IndexedReader::from_path(&second));
-    let genome_size = (0..first_bam.header.target_count()).fold(0, |s, tid| {
-        s + first_bam.header.target_len(tid).unwrap() as u64
-    });
-    let insert_size = libprosic::InsertSize {
-        mean: mean_insert_size,
-        sd: sd_insert_size
-    };
-
-    // init normal sample
-    let init_sample = |bam| {
-        libprosic::Sample::new(
-            bam,
-            pileup_window,
-            !no_fragment_evidence,
-            !no_secondary,
-            !no_mapq,
-            adjust_mapq,
-            insert_size,
-            libprosic::likelihood::LatentVariableModel::new(1.0),
-            prob_spurious_isize,
-            max_indel_overlap,
-        )
-    };
-
-    let first_sample = init_sample(first_bam);
-    let second_sample = init_sample(second_bam);
-
-    // setup events
-    let events = [
-        libprosic::call::pairwise::PairEvent {
-            name: "both".to_owned(),
-            af_case: vec![AlleleFreq(0.5), AlleleFreq(1.0)],
-            af_control: vec![AlleleFreq(0.5), AlleleFreq(1.0)]
-        },
-        libprosic::call::pairwise::PairEvent {
-            name: "first".to_owned(),
-            af_case: vec![AlleleFreq(0.5), AlleleFreq(1.0)],
-            af_control: vec![AlleleFreq(0.0)]
-        },
-        libprosic::call::pairwise::PairEvent {
-            name: "second".to_owned(),
-            af_case: vec![AlleleFreq(0.0)],
-            af_control: vec![AlleleFreq(0.5), AlleleFreq(1.0)]
-        }
-    ];
-    // call absent variants as the complement of the other events
-    let absent_event = libprosic::ComplementEvent { name: "absent".to_owned() };
-
-    if !flat_priors {
-        panic!("only flat priors are supported for now (use --flat-priors)");
-    } else {
-        let prior_model = libprosic::priors::FlatNormalNormalModel::new(ploidy);
-
-        // init joint model
-        let mut joint_model = libprosic::model::PairCaller::new(
-            first_sample,
-            second_sample,
-            prior_model
-        );
-
-        // perform calling
-        libprosic::call::pairwise::call::<
-            _, _, _,
-            libprosic::model::PairCaller<
-                libprosic::model::DiscreteAlleleFreqs,
-                libprosic::model::DiscreteAlleleFreqs,
-                libprosic::model::priors::FlatNormalNormalModel
-            >, _, _, _, _>
-        (
-            candidates,
-            output,
-            &reference,
-            &events,
-            Some(&absent_event),
-            &mut joint_model,
-            omit_snvs,
-            omit_indels,
-            Some(max_indel_len),
-            observations.as_ref(),
-            exclusive_end
-        )
-    }
-}

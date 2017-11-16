@@ -4,10 +4,10 @@ version = "2.1.0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = { git = "https://github.com/prosic/libprosic.git" }
-clap = {version = "2.10.*", features = ["yaml", "color", "suggestions"]}
-rust-htslib = "0.11.*"
-bio = "0.13.*"
+libprosic = { git = "https://github.com/prosic/libprosic.git", branch = "pair-hmm-2" }
+clap = {version = "2.24", features = ["yaml", "color", "suggestions"]}
+rust-htslib = "0.12"
+bio = "0.14"
 log = "0.3.*"
 fern = "0.3.*"
 csv = "0.14.*"

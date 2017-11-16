@@ -91,7 +91,28 @@ subcommands:
             long: spurious-isize-rate
             short: r
             value_name: FLOAT
-            help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0]."
+            default_value: "0.0"
+            help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201)."
+        - prob-spurious-ins:
+            long: spurious-ins-rate
+            value_name: FLOAT
+            default_value: "2.8e-6"
+            help: "Rate of spuriously inserted bases by the sequencer (Illumina: 2.8e-6, see Schirmer et al. BMC Bioinformatics 2016)."
+        - prob-spurious-del:
+            long: spurious-del-rate
+            value_name: FLOAT
+            default_value: "5.1e-6"
+            help: "Rate of spuriosly deleted bases by the sequencer (Illumina: 5.1e-6, see Schirmer et al. BMC Bioinformatics 2016)."
+        - prob-ins-extend:
+            long: spurious-insext-rate
+            value_name: FLOAT
+            default_value: "0.0"
+            help: "Extension rate of spurious insertions by the sequencer (Illumina: 0.0, see Schirmer et al. BMC Bioinformatics 2016) [0.0]."
+        - prob-del-extend:
+            long: spurious-delext-rate
+            value_name: FLOAT
+            default_value: "0.0"
+            help: "Extension rate of spurious insertions by the sequencer (Illumina: 0.0, see Schirmer et al. BMC Bioinformatics 2016)."
         - min-somatic-af:
             long: min-somatic-af
             value_name: FLOAT
@@ -133,96 +154,10 @@ subcommands:
             long: max-indel-overlap
             value_name: INT
             help: When considering read evidence for an indel, omit alignments that overlap more than the given value. The default value ensures fair sampling of reads supporting alternative and reference allele. Choosing a too large overlap results in biases towards the reference allele, because of too low MAPQs and unmapped reads [25].
-
-  - call-normal-normal:
-      about: Call variants from a normal sample pair and a VCF/BCF with candidate variants.
-      args:
-        - first:
-            required: true
-            help: BAM file with reads from tumor sample.
-        - second:
-            required: true
-            help: BAM file with reads from normal sample.
-        - reference:
-            required: true
-            help: FASTA file with reference genome. Has to be indexed with samtools faidx.
-        - candidates:
-            long: candidates
-            short: c
-            value_name: FILE
-            help: VCF/BCF file to process (if omitted, read from STDIN).
-        - output:
-            long: output
-            short: o
-            value_name: FILE
-            help: BCF file that shall contain the results (if omitted, write to STDOUT).
-        - insert-size-mean:
-            long: isize-mean
-            short: m
-            value_name: FLOAT
-            required: true
-            help: Mean of sample insert size.
-        - insert-size-sd:
-            long: isize-sd
-            short: s
-            required: true
-            value_name: FLOAT
-            help: Standard deviation of sample insert size.
-        - ploidy:
-            long: ploidy
-            short: p
+        - indel-window:
+            long: indel-window
             value_name: INT
-            help: Expected ploidy [2].
-        - heterozygosity:
-            long: het
-            value_name: FLOAT
-            help: Expected heterozygosity of normal sample (ignored if --flat-priors) [1.25E-4].
-        - adjust-mapq:
-            long: adjust-mapq
-            help: Downgrade mapping quality of alignments supporting an indel if there are no fragments supporting the same indel. Such cases are more likely to be alignment/repeat artifacts.
-        - prob-spurious-isize:
-            long: spurious-isize-rate
-            short: r
-            value_name: FLOAT
-            help: "Rate of wrongly reported insert size abberations (should be set depending on mapper, BWA: 0.01332338, LASER: 0.05922201) [0.0]."
-        - pileup-window:
-            long: pileup-window
-            value_name: INT
-            help: Window to investigate for evidence left and right of each variant [2500].
-        - omit-snvs:
-            long: omit-snvs
-            help: Don't call SNVs.
-        - omit-indels:
-            long: omit-indels
-            help: Don't call indels.
-        - omit-fragment-evidence:
-            long: omit-fragment-evidence
-            help: Omit evidence consisting of read pairs with unexpected insert size (insert size parameters will be ignored).
-        - omit-secondary-alignments:
-            long: omit-secondary-alignments
-            help: Omit secondary alignments.
-        - omit-mapq:
-            long: omit-mapq
-            help: Omit mapping quality (all alignments are trusted).
-        - observations:
-            long: obs
-            value_name: FILE
-            help: Optional path where read observations shall be written to. The resulting file contains a line for each observation with tab-separated values.
-        - flat-priors:
-            long: flat-priors
-            help: Ignore the prior model and use flat priors instead.
-        - max-indel-len:
-            long: max-indel-len
-            value_name: INT
-            help: Omit longer indels when calling [1000].
-        - exclusive-end:
-            long: exclusive-end
-            help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
-        - max-indel-overlap:
-            long: max-indel-overlap
-            value_name: INT
-            help: When considering read evidence for an indel, omit alignments that overlap more than the given value. The default value ensures fair sampling of reads supporting alternative and reference allele. Choosing a too large overlap results in biases towards the reference allele, because of too low MAPQs and unmapped reads [25].
-
+            help: Number of bases to consider left and right of indel breakpoint when calculating read support. This number should not be too large in order to avoid biases caused by other close variants [10].
 
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.

@@ -113,10 +113,6 @@ subcommands:
             value_name: FLOAT
             default_value: "0.0"
             help: "Extension rate of spurious insertions by the sequencer (Illumina: 0.0, see Schirmer et al. BMC Bioinformatics 2016)."
-        - min-somatic-af:
-            long: min-somatic-af
-            value_name: FLOAT
-            help: Infimum of allele frequency for somatic mutation [0.0].
         - pileup-window:
             long: pileup-window
             value_name: INT

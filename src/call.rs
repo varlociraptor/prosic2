@@ -2,7 +2,7 @@ use std::error::Error;
 
 use clap;
 use libprosic;
-use libprosic::model::AlleleFreq;
+use libprosic::model::{AlleleFreq, ContinuousAlleleFreqs};
 use rust_htslib::bam;
 use bio::stats::Prob;
 
@@ -24,7 +24,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap_or(0.03);
     let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap_or(0.01);
     let tumor_purity = value_t!(matches, "purity", f64).unwrap_or(1.0);
-    let min_somatic_af = value_t!(matches, "min-somatic-af", f64).map(|af| AlleleFreq(af)).unwrap_or(AlleleFreq(0.05));
     let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let no_secondary = matches.is_present("omit-secondary-alignments");
@@ -105,17 +104,17 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let events = [
         libprosic::call::pairwise::PairEvent {
             name: "germline".to_owned(),
-            af_case: AlleleFreq(0.0)..AlleleFreq(1.0),
+            af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
             af_control: vec![AlleleFreq(0.5), AlleleFreq(1.0)]
         },
         libprosic::call::pairwise::PairEvent {
             name: "somatic".to_owned(),
-            af_case: min_somatic_af..AlleleFreq(1.0),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
             af_control: vec![AlleleFreq(0.0)]
         },
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),
-            af_case: AlleleFreq(0.0)..AlleleFreq(0.0),
+            af_case: ContinuousAlleleFreqs::inclusive(0.0..0.0),
             af_control: vec![AlleleFreq(0.0)]
         }
     ];
@@ -189,5 +188,3 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         )
     }
 }
-
-

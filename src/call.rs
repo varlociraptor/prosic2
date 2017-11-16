@@ -42,7 +42,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
     let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap_or(10);
 
-    let prob_spurious_isize = try!(Prob::checked(value_t!(matches, "prob-spurious-isize", f64).unwrap_or(0.0)));
     let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
     let prob_spurious_del = Prob::checked(value_t_or_exit!(matches, "prob-spurious-del", f64))?;
     let prob_ins_extend = Prob::checked(value_t_or_exit!(matches, "prob-ins-extend", f64))?;
@@ -69,7 +68,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: tumor_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
-        prob_spurious_isize,
         prob_spurious_ins,
         prob_spurious_del,
         prob_ins_extend,
@@ -91,7 +89,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             sd: normal_sd_insert_size
         },
         libprosic::likelihood::LatentVariableModel::new(1.0),
-        prob_spurious_isize,
         prob_spurious_ins,
         prob_spurious_del,
         prob_ins_extend,

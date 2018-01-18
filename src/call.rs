@@ -4,6 +4,7 @@ use clap;
 use libprosic;
 use libprosic::model::{AlleleFreq, ContinuousAlleleFreqs};
 use rust_htslib::bam;
+use rust_htslib::prelude::*;
 use bio::stats::Prob;
 
 
@@ -51,8 +52,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 
     let tumor_bam = bam::IndexedReader::from_path(&tumor)?;
     let normal_bam = bam::IndexedReader::from_path(&normal)?;
-    let genome_size = (0..tumor_bam.header.target_count()).fold(0, |s, tid| {
-        s + tumor_bam.header.target_len(tid).unwrap() as u64
+    let genome_size = (0..tumor_bam.header().target_count()).fold(0, |s, tid| {
+        s + tumor_bam.header().target_len(tid).unwrap() as u64
     });
 
     // init tumor sample

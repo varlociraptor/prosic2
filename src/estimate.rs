@@ -3,7 +3,7 @@ use std::error::Error;
 use std::io::prelude::*;
 use std::fs::File;
 
-use rustc_serialize::json;
+use serde_json;
 use clap;
 use csv;
 use rust_htslib::bcf;
@@ -27,9 +27,8 @@ pub fn effective_mutation_rate(matches: &clap::ArgMatches) -> Result<(), Box<Err
 
     // if --fit is given, print data visualizing model fit
     if let Some(path) = matches.value_of("fit") {
-        let json = json::encode(&estimate).unwrap();
         let mut f = try!(File::create(path));
-        try!(f.write_all(json.as_bytes()));
+        serde_json::to_writer(&mut f, &estimate)?;
     }
     Ok(())
 }

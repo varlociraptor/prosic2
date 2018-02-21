@@ -4,7 +4,7 @@ version = "2.1.0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = { git = "https://github.com/prosic/libprosic.git", branch = "sampling-prob" }
+libprosic = { git = "https://github.com/prosic/libprosic.git", branch = "softclip-dist" }
 clap = {version = "2.24", features = ["yaml", "color", "suggestions"]}
 rust-htslib = "0.16"
 bio = { git = "https://github.com/rust-bio/rust-bio.git", branch="master" } # "0.14"

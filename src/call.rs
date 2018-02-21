@@ -2,7 +2,7 @@ use std::error::Error;
 
 use clap;
 use libprosic;
-use libprosic::model::{AlleleFreq, ContinuousAlleleFreqs};
+use libprosic::model::{AlleleFreq, ContinuousAlleleFreqs, DiscreteAlleleFreqs};
 use rust_htslib::bam;
 use rust_htslib::prelude::*;
 use bio::stats::Prob;
@@ -14,6 +14,8 @@ fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
 
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
+    // TODO remove this or make it a parameter
+    let max_amplification = 1;
     // read command line parameters
     let tumor_mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
     let tumor_sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
@@ -103,12 +105,12 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         libprosic::call::pairwise::PairEvent {
             name: "germline".to_owned(),
             af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
-            af_control: vec![AlleleFreq(0.5), AlleleFreq(1.0)]
+            af_control: DiscreteAlleleFreqs::feasible(ploidy, max_amplification).not_absent()
         },
         libprosic::call::pairwise::PairEvent {
             name: "somatic".to_owned(),
             af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
-            af_control: vec![AlleleFreq(0.0)]
+            af_control: DiscreteAlleleFreqs::absent()
         },
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),

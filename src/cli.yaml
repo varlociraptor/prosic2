@@ -146,10 +146,6 @@ subcommands:
         - exclusive-end:
             long: exclusive-end
             help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
-        - max-indel-overlap:
-            long: max-indel-overlap
-            value_name: INT
-            help: When considering read evidence for an indel, omit alignments that overlap more than the given value. The default value ensures fair sampling of reads supporting alternative and reference allele. Choosing a too large overlap results in biases towards the reference allele, because of too low MAPQs and unmapped reads [25].
         - indel-window:
             long: indel-window
             value_name: INT

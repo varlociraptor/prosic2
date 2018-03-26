@@ -14,8 +14,6 @@ fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
 
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    // TODO remove this or make it a parameter
-    let max_amplification = 1;
     // read command line parameters
     let tumor_mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
     let tumor_sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
@@ -42,7 +40,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
-    let max_indel_overlap = value_t!(matches, "max-indel-overlap", u32).unwrap_or(25);
     let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap_or(10);
 
     let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
@@ -75,7 +72,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_spurious_del,
         prob_ins_extend,
         prob_del_extend,
-        max_indel_overlap,
         indel_haplotype_window
     );
 
@@ -96,7 +92,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_spurious_del,
         prob_ins_extend,
         prob_del_extend,
-        max_indel_overlap,
         indel_haplotype_window
     );
 
@@ -105,7 +100,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         libprosic::call::pairwise::PairEvent {
             name: "germline".to_owned(),
             af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
-            af_control: DiscreteAlleleFreqs::feasible(ploidy, max_amplification).not_absent()
+            af_control: DiscreteAlleleFreqs::feasible(ploidy).not_absent()
         },
         libprosic::call::pairwise::PairEvent {
             name: "somatic".to_owned(),
@@ -115,7 +110,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),
             af_case: ContinuousAlleleFreqs::inclusive(0.0..0.0),
-            af_control: vec![AlleleFreq(0.0)]
+            af_control: DiscreteAlleleFreqs::absent()
         }
     ];
 

@@ -1,6 +1,5 @@
 use std::io;
 use std::error::Error;
-use std::io::prelude::*;
 use std::fs::File;
 
 use serde_json;

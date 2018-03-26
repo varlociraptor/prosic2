@@ -36,54 +36,102 @@ subcommands:
             short: o
             value_name: FILE
             help: BCF file that shall contain the results (if omitted, write to STDOUT).
+        - tumor-stats:
+            long: tumor-stats
+            value_name: FILE
+            requires: normal-stats
+            conflicts_with:
+              - insert-size-mean
+              - insert-size-sd
+              - normal-insert-size-mean
+              - normal-insert-size-sd
+            help: |
+              Output of `samtools stats` for tumor bam. Either provide this or
+              use --isize-mean and --isize-sd.
+        - normal-stats:
+            long: normal-stats
+            value_name: FILE
+            requires: tumor-stats
+            conflicts_with:
+              - insert-size-mean
+              - insert-size-sd
+              - normal-insert-size-mean
+              - normal-insert-size-sd
+            help: |
+              Output of `samtools stats` for normal bam. Either provide this or
+              use --normal-isize-mean and --normal-isize-sd.
         - insert-size-mean:
             long: isize-mean
             short: m
             value_name: FLOAT
-            required: true
+            requires:
+              - insert-size-sd
             help: Mean of sample insert size.
         - insert-size-sd:
             long: isize-sd
             short: s
-            required: true
             value_name: FLOAT
+            requires:
+              - insert-size-mean
             help: Standard deviation of sample insert size.
-        - effective-mutation-rate:
-            long: effmut
-            value_name: FLOAT
-            help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs, ignored if --flat-priors).
-        - deletion-factor:
-            long: deletion-factor
-            short: d
-            value_name: FLOAT
-            help: Factor of deletion mutation rate relative to SNV mutation rate [0.03 according to Hodkinson et al. Nature Reviews Genetics 2011].
-        - insertion-factor:
-            long: insertion-factor
-            short: i
-            value_name: FLOAT
-            help: Factor of insertion mutation rate relative to SNV mutation rate [0.01 according to Hodkinson et al. Nature Reviews Genetics 2011].
-        - ploidy:
-            long: ploidy
-            short: p
-            value_name: INT
-            help: Average ploidy of tumor and normal sample [2].
-        - purity:
-            long: purity
-            short: a
-            value_name: FLOAT
-            help: Purity of tumor sample [1.0].
         - normal-insert-size-mean:
             long: normal-isize-mean
             value_name: FLOAT
+            requires:
+              - normal-insert-size-sd
+              - insert-size-mean
+              - insert-size-sd
             help: Mean of normal sample insert size (if it differs from tumor).
         - normal-insert-size-sd:
             long: normal-isize-sd
             value_name: FLOAT
+            requires:
+              - normal-insert-size-mean
+              - insert-size-mean
+              - insert-size-sd
             help: Standard deviation of normal sample insert size (if it differs from tumor).
+        - effective-mutation-rate:
+            long: effmut
+            value_name: FLOAT
+            conflicts_with:
+              - flat-priors
+            default_value: "2000.0"
+            help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
+        - deletion-factor:
+            long: deletion-factor
+            short: d
+            value_name: FLOAT
+            conflicts_with:
+              - flat-priors
+            default_value: "0.03"
+            help: Factor of deletion mutation rate relative to SNV mutation rate (0.03 according to Hodkinson et al. Nature Reviews Genetics 2011).
+        - insertion-factor:
+            long: insertion-factor
+            short: i
+            value_name: FLOAT
+            conflicts_with:
+              - flat-priors
+            default_value: "0.01"
+            help: Factor of insertion mutation rate relative to SNV mutation rate (0.01 according to Hodkinson et al. Nature Reviews Genetics 2011).
+        - ploidy:
+            long: ploidy
+            short: p
+            value_name: INT
+            default_value: "2"
+            help: Average ploidy of tumor and normal sample.
+        - purity:
+            long: purity
+            short: a
+            value_name: FLOAT
+            default_value: "1.0"
+            help: Purity of tumor sample.
         - heterozygosity:
             long: het
             value_name: FLOAT
-            help: Expected heterozygosity of normal sample (ignored if --flat-priors) [1.25E-4].
+            default_value: "1.25E-4"
+            conflicts_with:
+              - flat-priors
+            help: Expected heterozygosity of normal sample.
         - adjust-mapq:
             long: adjust-mapq
             help: Downgrade mapping quality of alignments supporting an indel if there are no fragments supporting the same indel. Such cases are more likely to be alignment/repeat artifacts.
@@ -116,7 +164,8 @@ subcommands:
         - pileup-window:
             long: pileup-window
             value_name: INT
-            help: Window to investigate for evidence left and right of each variant [2500].
+            default_value: "2500"
+            help: Window to investigate for evidence left and right of each variant.
         - omit-snvs:
             long: omit-snvs
             help: Don't call SNVs.
@@ -142,14 +191,16 @@ subcommands:
         - max-indel-len:
             long: max-indel-len
             value_name: INT
-            help: Omit longer indels when calling [1000].
+            default_value: "1000"
+            help: Omit longer indels when calling.
         - exclusive-end:
             long: exclusive-end
             help: Assume that the END tag is exclusive (i.e. it points to the position after the variant). This is needed, e.g., for DELLY.
         - indel-window:
             long: indel-window
             value_name: INT
-            help: Number of bases to consider left and right of indel breakpoint when calculating read support. This number should not be too large in order to avoid biases caused by other close variants [10].
+            default_value: "100"
+            help: Number of bases to consider left and right of indel breakpoint when calculating read support. This number should not be too large in order to avoid biases caused by other close variants.
 
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.

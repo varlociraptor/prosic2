@@ -1,10 +1,11 @@
 use std::error::Error;
+use std::fs;
 
 use clap;
 use libprosic;
-use libprosic::model::{AlleleFreq, ContinuousAlleleFreqs, DiscreteAlleleFreqs};
+use libprosic::model::{ContinuousAlleleFreqs, DiscreteAlleleFreqs};
 use rust_htslib::bam;
-use rust_htslib::prelude::*;
+use rust_htslib::bam::Read;
 use bio::stats::Prob;
 
 
@@ -15,17 +16,30 @@ fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // read command line parameters
-    let tumor_mean_insert_size = value_t!(matches, "insert-size-mean", f64).unwrap();
-    let tumor_sd_insert_size = value_t!(matches, "insert-size-sd", f64).unwrap();
-    let normal_mean_insert_size = value_t!(matches, "normal-insert-size-mean", f64).unwrap_or(tumor_mean_insert_size);
-    let normal_sd_insert_size = value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_sd_insert_size);
-    let normal_heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap_or(1.25E-4)));
-    let ploidy = value_t!(matches, "ploidy", u32).unwrap_or(2);
-    let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap_or(2000.0);
-    let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap_or(0.03);
-    let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap_or(0.01);
-    let tumor_purity = value_t!(matches, "purity", f64).unwrap_or(1.0);
-    let pileup_window = value_t!(matches, "pileup-window", u32).unwrap_or(2500);
+    let tumor_insert_size = if let Some(tumor_stats) = matches.value_of("tumor-stats") {
+        libprosic::InsertSize::from_samtools_stats(&mut fs::File::open(&tumor_stats)?)?
+    } else {
+        libprosic::InsertSize {
+            mean: value_t!(matches, "insert-size-mean", f64).unwrap(),
+            sd: value_t!(matches, "insert-size-sd", f64).unwrap()
+        }
+    };
+    let normal_insert_size = if let Some(normal_stats) = matches.value_of("normal-stats") {
+        libprosic::InsertSize::from_samtools_stats(&mut fs::File::open(&normal_stats)?)?
+    } else {
+        libprosic::InsertSize {
+            mean: value_t!(matches, "normal-insert-size-mean", f64).unwrap_or(tumor_insert_size.mean),
+            sd: value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_insert_size.sd)
+        }
+    };
+
+    let normal_heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap()));
+    let ploidy = value_t!(matches, "ploidy", u32).unwrap();
+    let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
+    let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap();
+    let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap();
+    let tumor_purity = value_t!(matches, "purity", f64).unwrap();
+    let pileup_window = value_t!(matches, "pileup-window", u32).unwrap();
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let no_secondary = matches.is_present("omit-secondary-alignments");
     let no_mapq = matches.is_present("omit-mapq");
@@ -40,14 +54,14 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let observations = matches.value_of("observations");
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
-    let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap_or(10);
+    let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap();
 
     let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
     let prob_spurious_del = Prob::checked(value_t_or_exit!(matches, "prob-spurious-del", f64))?;
     let prob_ins_extend = Prob::checked(value_t_or_exit!(matches, "prob-ins-extend", f64))?;
     let prob_del_extend = Prob::checked(value_t_or_exit!(matches, "prob-del-extend", f64))?;
 
-    let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap_or(1000);
+    let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap();
 
     let tumor_bam = bam::IndexedReader::from_path(&tumor)?;
     let normal_bam = bam::IndexedReader::from_path(&normal)?;
@@ -63,10 +77,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         !no_secondary,
         !no_mapq,
         adjust_mapq,
-        libprosic::InsertSize {
-            mean: tumor_mean_insert_size,
-            sd: tumor_sd_insert_size
-        },
+        tumor_insert_size,
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
         prob_spurious_ins,
         prob_spurious_del,
@@ -83,10 +94,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         !no_secondary,
         !no_mapq,
         adjust_mapq,
-        libprosic::InsertSize {
-            mean: normal_mean_insert_size,
-            sd: normal_sd_insert_size
-        },
+        normal_insert_size,
         libprosic::likelihood::LatentVariableModel::new(1.0),
         prob_spurious_ins,
         prob_spurious_del,

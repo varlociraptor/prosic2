@@ -33,7 +33,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         }
     };
 
-    let normal_heterozygosity = try!(Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap()));
+    let normal_heterozygosity = Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap())?;
     let ploidy = value_t!(matches, "ploidy", u32).unwrap();
     let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
     let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap();

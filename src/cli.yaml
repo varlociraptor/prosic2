@@ -93,24 +93,18 @@ subcommands:
         - effective-mutation-rate:
             long: effmut
             value_name: FLOAT
-            conflicts_with:
-              - flat-priors
             default_value: "2000.0"
             help: Effective SNV mutation rate of tumor sample (should be estimated from somatic SNVs).
         - deletion-factor:
             long: deletion-factor
             short: d
             value_name: FLOAT
-            conflicts_with:
-              - flat-priors
             default_value: "0.03"
             help: Factor of deletion mutation rate relative to SNV mutation rate (0.03 according to Hodkinson et al. Nature Reviews Genetics 2011).
         - insertion-factor:
             long: insertion-factor
             short: i
             value_name: FLOAT
-            conflicts_with:
-              - flat-priors
             default_value: "0.01"
             help: Factor of insertion mutation rate relative to SNV mutation rate (0.01 according to Hodkinson et al. Nature Reviews Genetics 2011).
         - ploidy:
@@ -129,8 +123,6 @@ subcommands:
             long: het
             value_name: FLOAT
             default_value: "1.25E-4"
-            conflicts_with:
-              - flat-priors
             help: Expected heterozygosity of normal sample.
         - adjust-mapq:
             long: adjust-mapq

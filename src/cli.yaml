@@ -124,9 +124,6 @@ subcommands:
             value_name: FLOAT
             default_value: "1.25E-4"
             help: Expected heterozygosity of normal sample.
-        - adjust-mapq:
-            long: adjust-mapq
-            help: Downgrade mapping quality of alignments supporting an indel if there are no fragments supporting the same indel. Such cases are more likely to be alignment/repeat artifacts.
         - prob-spurious-isize:
             long: spurious-isize-rate
             short: r
@@ -170,9 +167,6 @@ subcommands:
         - omit-secondary-alignments:
             long: omit-secondary-alignments
             help: Omit secondary alignments.
-        - omit-mapq:
-            long: omit-mapq
-            help: Omit mapping quality (all alignments are trusted).
         - observations:
             long: obs
             value_name: FILE

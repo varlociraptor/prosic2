@@ -43,14 +43,14 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 
     let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap();
 
-    let tumor_bam = bam::IndexedReader::from_path(&tumor)?;
-    let normal_bam = bam::IndexedReader::from_path(&normal)?;
+    let mut tumor_bam = bam::IndexedReader::from_path(&tumor)?;
+    let mut normal_bam = bam::IndexedReader::from_path(&normal)?;
     let genome_size = (0..tumor_bam.header().target_count()).fold(0, |s, tid| {
         s + tumor_bam.header().target_len(tid).unwrap() as u64
     });
 
-    let tumor_alignment_properties = AlignmentProperties::estimate(&mut tumor_bam);
-    let normal_alignment_properties = AlignmentProperties::estimate(&mut normal_bam);
+    let tumor_alignment_properties = libprosic::AlignmentProperties::estimate(&mut tumor_bam)?;
+    let normal_alignment_properties = libprosic::AlignmentProperties::estimate(&mut normal_bam)?;
 
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(

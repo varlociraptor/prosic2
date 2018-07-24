@@ -15,24 +15,6 @@ fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
 
 
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    // read command line parameters
-    let tumor_insert_size = if let Some(tumor_stats) = matches.value_of("tumor-stats") {
-        libprosic::InsertSize::from_samtools_stats(&mut fs::File::open(&tumor_stats)?)?
-    } else {
-        libprosic::InsertSize {
-            mean: value_t!(matches, "insert-size-mean", f64).unwrap(),
-            sd: value_t!(matches, "insert-size-sd", f64).unwrap()
-        }
-    };
-    let normal_insert_size = if let Some(normal_stats) = matches.value_of("normal-stats") {
-        libprosic::InsertSize::from_samtools_stats(&mut fs::File::open(&normal_stats)?)?
-    } else {
-        libprosic::InsertSize {
-            mean: value_t!(matches, "normal-insert-size-mean", f64).unwrap_or(tumor_insert_size.mean),
-            sd: value_t!(matches, "normal-insert-size-sd", f64).unwrap_or(tumor_insert_size.sd)
-        }
-    };
-
     let normal_heterozygosity = Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap())?;
     let ploidy = value_t!(matches, "ploidy", u32).unwrap();
     let tumor_effective_mutation_rate = value_t!(matches, "effective-mutation-rate", f64).unwrap();
@@ -67,15 +49,17 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         s + tumor_bam.header().target_len(tid).unwrap() as u64
     });
 
+    let tumor_alignment_properties = AlignmentProperties::estimate(&mut tumor_bam);
+    let normal_alignment_properties = AlignmentProperties::estimate(&mut normal_bam);
+
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(
         tumor_bam,
         pileup_window,
         !no_fragment_evidence,
         !no_secondary,
-        true,
         false,
-        tumor_insert_size,
+        tumor_alignment_properties,
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
         prob_spurious_ins,
         prob_spurious_del,
@@ -90,9 +74,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         pileup_window,
         !no_fragment_evidence,
         !no_secondary,
-        true,
         false,
-        normal_insert_size,
+        normal_alignment_properties,
         libprosic::likelihood::LatentVariableModel::new(1.0),
         prob_spurious_ins,
         prob_spurious_del,

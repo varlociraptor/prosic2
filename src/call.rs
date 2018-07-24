@@ -14,6 +14,12 @@ fn path_or_pipe(arg: Option<&str>) -> Option<&str> {
 }
 
 
+fn alignment_properties(path: &str) -> Result<libprosic::AlignmentProperties, Box<Error>> {
+    let mut bam = bam::Reader::from_path(path)?;
+    Ok(libprosic::AlignmentProperties::estimate(&mut bam)?)
+}
+
+
 pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let normal_heterozygosity = Prob::checked(value_t!(matches, "heterozygosity", f64).unwrap())?;
     let ploidy = value_t!(matches, "ploidy", u32).unwrap();
@@ -43,14 +49,19 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
 
     let max_indel_len = value_t!(matches, "max-indel-len", u32).unwrap();
 
-    let mut tumor_bam = bam::IndexedReader::from_path(&tumor)?;
-    let mut normal_bam = bam::IndexedReader::from_path(&normal)?;
+
+    let tumor_alignment_properties = alignment_properties(&tumor)?;
+    let normal_alignment_properties = alignment_properties(&normal)?;
+
+    info!("estimated tumor properties: {:?}", tumor_alignment_properties);
+    info!("estimated normal properties: {:?}", normal_alignment_properties);
+
+
+    let tumor_bam = bam::IndexedReader::from_path(&tumor)?;
+    let normal_bam = bam::IndexedReader::from_path(&normal)?;
     let genome_size = (0..tumor_bam.header().target_count()).fold(0, |s, tid| {
         s + tumor_bam.header().target_len(tid).unwrap() as u64
     });
-
-    let tumor_alignment_properties = libprosic::AlignmentProperties::estimate(&mut tumor_bam)?;
-    let normal_alignment_properties = libprosic::AlignmentProperties::estimate(&mut normal_bam)?;
 
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(

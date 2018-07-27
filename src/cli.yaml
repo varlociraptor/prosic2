@@ -110,9 +110,6 @@ subcommands:
         - omit-fragment-evidence:
             long: omit-fragment-evidence
             help: Omit evidence consisting of read pairs with unexpected insert size (insert size parameters will be ignored).
-        - omit-secondary-alignments:
-            long: omit-secondary-alignments
-            help: Omit secondary alignments.
         - observations:
             long: obs
             value_name: FILE

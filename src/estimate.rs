@@ -5,7 +5,7 @@ use std::fs::File;
 use serde_json;
 use clap;
 use csv;
-use rust_htslib::bcf;
+use bio::stats::{Prob, LogProb};
 
 use libprosic;
 use libprosic::model::AlleleFreq;
@@ -66,31 +66,17 @@ pub fn parse_vartype(vartype: &str, min_len: Option<u32>, max_len: Option<u32>) 
 
 pub fn fdr(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let call_bcf = matches.value_of("calls").unwrap();
+    let alpha = value_t!(matches, "alpha", f64).unwrap();
     let event = matches.value_of("event").unwrap();
     let vartype = matches.value_of("vartype").unwrap();
     let min_len = value_t!(matches, "min-len", u32).ok();
     let max_len = value_t!(matches, "max-len", u32).ok();
     let vartype = parse_vartype(vartype, min_len, max_len)?;
-    let method = matches.value_of("method").unwrap();
 
     let event = DummyEvent { name: event.to_owned() };
-    let mut writer = io::stdout();
-    let mut call_reader = try!(bcf::Reader::from_path(&call_bcf));
+    let alpha = LogProb::from(Prob::checked(alpha)?);
 
-    if method == "bh" {
-        let null_bcf = matches.value_of("null-calls").unwrap();
-        let mut null_reader = try!(bcf::Reader::from_path(&null_bcf));
-
-        estimation::fdr::bh::control_fdr(
-            &mut call_reader,
-            &mut null_reader,
-            &mut writer,
-            &[event],
-            &vartype
-        )?;
-    } else {
-        estimation::fdr::ev::control_fdr(&mut call_reader, &mut writer, &[event], &vartype)?;
-    }
+    estimation::fdr::ev::control_fdr::<_, _, &str>(call_bcf, None, &[event], &vartype, alpha)?;
 
     Ok(())
 }

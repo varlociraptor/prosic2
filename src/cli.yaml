@@ -150,25 +150,17 @@ subcommands:
             help: Path to file that will observations and the parameters of the fitted model as JSON.
 
   - control-fdr:
-      about: Print thresholds for controlling the FDR at different levels using Benjamini-Hochberg over p-values generated from an empirical null distribution of posterior error probabilities.
+      about: Filter calls for controlling the false discovery rate (FDR) at given level.
       args:
         - calls:
             required: true
+            value_name: BCF
             help: Calls as provided by prosic tumor-normal.
-        - method:
-            required: true
-            long: method
-            value_name: STRING
-            possible_values:
-              - bh
-              - ev
-            help: |
-              Method to use. If bh, use Benjamini-Hochberg over p-values generated from an empirical null distribution of posterior error probabilities (--null-calls is required in this case).
-              If ev, calculate the expected FDR over posterior error probabilities as presented by Mueller et al. 2006.
-        - null-calls:
-            value_name: FILE
-            long: null-calls
-            help: Null model calls as provided by prosic tumor-normal, e.g. when flipping tumor and normal sample.
+        - alpha:
+            long: fdr
+            short: a
+            default: 0.05
+            help: FDR to control for.
         - event:
             long: event
             short: e
@@ -177,7 +169,6 @@ subcommands:
         - vartype:
             long: var
             value_name: STRING
-            required: true
             help: Variant type to consider (SNV, INS, DEL).
         - min-len:
             long: min-len

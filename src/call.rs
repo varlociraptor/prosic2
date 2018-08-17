@@ -1,5 +1,4 @@
 use std::error::Error;
-use std::fs;
 
 use clap;
 use libprosic;

@@ -4,10 +4,10 @@ version = "2.1.0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = { git = "https://github.com/prosic/libprosic.git", branch = "fix-fdr-control" }
+libprosic = { git = "https://github.com/prosic/libprosic.git", branch = "master" }
 clap = {version = "2.24", features = ["yaml", "color", "suggestions"]}
 rust-htslib = { git = "https://github.com/rust-bio/rust-htslib.git", branch="master" }
-bio = { git = "https://github.com/rust-bio/rust-bio.git", branch="master" } # "0.14"
+bio = { git = "https://github.com/rust-bio/rust-bio.git", branch="master" }
 log = "0.3.*"
 fern = "0.3.*"
 csv = "0.14.*"

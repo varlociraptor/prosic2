@@ -94,61 +94,74 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     );
 
     // setup events
+    // TODO make use of --ploidy
     let events = [
         libprosic::call::pairwise::PairEvent {
-            name: "germline".to_owned(),
-            af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
-            af_control: DiscreteAlleleFreqs::feasible(ploidy).not_absent()
+            name: "germline_het".to_owned(),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_control: ContinuousAlleleFreqs::singleton(0.5),
         },
         libprosic::call::pairwise::PairEvent {
-            name: "somatic".to_owned(),
+            name: "germline_hom".to_owned(),
             af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
-            af_control: DiscreteAlleleFreqs::absent()
+            af_control: ContinuousAlleleFreqs::singleton(1.0),
+        },
+        libprosic::call::pairwise::PairEvent {
+            name: "somatic_tumor".to_owned(),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_control: ContinuousAlleleFreqs::absent(),
+        },
+        libprosic::call::pairwise::PairEvent {
+            name: "somatic_normal".to_owned(),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_control: ContinuousAlleleFreqs::exclusive(0.1..0.5),
         },
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),
-            af_case: ContinuousAlleleFreqs::inclusive(0.0..0.0),
-            af_control: DiscreteAlleleFreqs::absent()
-        }
+            af_case: ContinuousAlleleFreqs::absent(),
+            af_control: ContinuousAlleleFreqs::absent(),
+        },
     ];
 
     if !flat_priors {
-        let prior_model = libprosic::priors::TumorNormalModel::new(
-            ploidy,
-            tumor_effective_mutation_rate,
-            deletion_factor,
-            insertion_factor,
-            genome_size,
-            normal_heterozygosity
-        );
-
-        // init joint model
-        let mut joint_model = libprosic::model::PairCaller::new(
-            tumor_sample,
-            normal_sample,
-            prior_model
-        );
-
-        // perform calling
-        libprosic::call::pairwise::call::<
-            _, _, _,
-            libprosic::model::PairCaller<
-                libprosic::model::ContinuousAlleleFreqs,
-                libprosic::model::DiscreteAlleleFreqs,
-                libprosic::model::priors::TumorNormalModel
-            >, _, _, _, _>
-        (
-            candidates,
-            output,
-            &reference,
-            &events,
-            &mut joint_model,
-            omit_snvs,
-            omit_indels,
-            Some(max_indel_len),
-            observations.as_ref(),
-            exclusive_end
-        )
+        // TODO re-enable
+        panic!("non-flat priors are currently under development and not yet supported");
+        // let prior_model = libprosic::priors::TumorNormalModel::new(
+        //     ploidy,
+        //     tumor_effective_mutation_rate,
+        //     deletion_factor,
+        //     insertion_factor,
+        //     genome_size,
+        //     normal_heterozygosity
+        // );
+        //
+        // // init joint model
+        // let mut joint_model = libprosic::model::PairCaller::new(
+        //     tumor_sample,
+        //     normal_sample,
+        //     prior_model
+        // );
+        //
+        // // perform calling
+        // libprosic::call::pairwise::call::<
+        //     _, _, _,
+        //     libprosic::model::PairCaller<
+        //         libprosic::model::ContinuousAlleleFreqs,
+        //         libprosic::model::ContinuousAlleleFreqs,
+        //         libprosic::model::priors::TumorNormalModel
+        //     >, _, _, _, _>
+        // (
+        //     candidates,
+        //     output,
+        //     &reference,
+        //     &events,
+        //     &mut joint_model,
+        //     omit_snvs,
+        //     omit_indels,
+        //     Some(max_indel_len),
+        //     observations.as_ref(),
+        //     exclusive_end
+        // )
     } else {
         let prior_model = libprosic::priors::FlatTumorNormalModel::new(ploidy);
 
@@ -164,7 +177,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             _, _, _,
             libprosic::model::PairCaller<
                 libprosic::model::ContinuousAlleleFreqs,
-                libprosic::model::DiscreteAlleleFreqs,
+                libprosic::model::ContinuousAlleleFreqs,
                 libprosic::model::priors::FlatTumorNormalModel
             >, _, _, _, _>
         (

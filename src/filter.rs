@@ -41,10 +41,9 @@ pub fn parse_vartype(vartype: &str, min_len: Option<u32>, max_len: Option<u32>) 
 
 
 pub fn filter(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    let events = matches.values_of("events").unwrap();
-    let events = events.into_iter().map(|event| DummyEvent { name: event.to_owned() }).collect_vec();
-
     if let Some(matches) = matches.subcommand_matches("control-fdr") {
+        let events = matches.values_of("events").unwrap();
+        let events = events.into_iter().map(|event| DummyEvent { name: event.to_owned() }).collect_vec();
         let call_bcf = matches.value_of("calls").unwrap();
 
         let vartype = matches.value_of("vartype").unwrap();
@@ -57,6 +56,8 @@ pub fn filter(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
             call_bcf, None, &events, &vartype, alpha
         )?;
     } else if let Some(matches) = matches.subcommand_matches("posterior-odds") {
+        let events = matches.values_of("events").unwrap();
+        let events = events.into_iter().map(|event| DummyEvent { name: event.to_owned() }).collect_vec();
         let score = matches.value_of("odds").unwrap();
         let min_evidence = match score {
             "none" => KassRaftery::None,

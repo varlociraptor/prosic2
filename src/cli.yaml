@@ -153,14 +153,6 @@ subcommands:
       about: |
         Filter calls by either controlling the false discovery rate (FDR) at given level,
         or by posterior odds against the given events.
-      args:
-        - events:
-            long: events
-            short: e
-            value_name: STRING
-            multiple: true
-            global: true
-            help: Events to consider.
       subcommands:
         - posterior-odds:
             about: |
@@ -180,6 +172,12 @@ subcommands:
                   possible_values: [none, barely, positive, strong, very-strong]
                   help: |
                    Kass-Raftery score to filter against.
+              - events:
+                  long: events
+                  short: e
+                  value_name: STRING
+                  multiple: true
+                  help: Events to consider.
 
         - control-fdr:
             about: |
@@ -189,6 +187,12 @@ subcommands:
                   required: true
                   value_name: BCF
                   help: Calls as provided by prosic tumor-normal.
+              - events:
+                  long: events
+                  short: e
+                  value_name: STRING
+                  multiple: true
+                  help: Events to consider.
               - fdr:
                   long: fdr
                   short: a

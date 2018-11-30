@@ -77,7 +77,7 @@ fn main() {
             error!("Error: {}", e);
             process::exit(1);
         }
-    } else if let Some(matches) = matches.subcommand_matches("control-fdr") {
+    } else if let Some(matches) = matches.subcommand_matches("filter-calls") {
         if let Err(e) = filter::filter(matches) {
             error!("Error: {}", e);
             process::exit(1);

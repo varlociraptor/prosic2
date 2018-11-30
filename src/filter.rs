@@ -41,38 +41,34 @@ pub fn parse_vartype(vartype: &str, min_len: Option<u32>, max_len: Option<u32>) 
 
 
 pub fn filter(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    let call_bcf = matches.value_of("calls").unwrap();
     let events = matches.values_of("event").unwrap();
-    let vartype = matches.value_of("vartype").unwrap();
-    let min_len = value_t!(matches, "min-len", u32).ok();
-    let max_len = value_t!(matches, "max-len", u32).ok();
-    let vartype = parse_vartype(vartype, min_len, max_len)?;
-
     let events = events.into_iter().map(|event| DummyEvent { name: event.to_owned() }).collect_vec();
 
-    match (value_t!(matches, "fdr", f64), matches.value_of("odds")) {
-        (Ok(alpha), None) => {
-            let alpha = LogProb::from(Prob::checked(alpha)?);
-            filtration::fdr::control_fdr::<_, _, &str>(
-                call_bcf, None, &events, &vartype, alpha
-            )?;
-        },
-        (Err(e), None) => {
-            return Err(Box::new(e));
-        },
-        (_, Some(score)) => {
-            let min_evidence = match score {
-                "none" => KassRaftery::None,
-                "barely" => KassRaftery::Barely,
-                "positive" => KassRaftery::Positive,
-                "strong" => KassRaftery::Strong,
-                "very-strong" => KassRaftery::VeryStrong,
-                _ => panic!("bug: unexpected KassRaftery score"),
-            };
-            filtration::posterior_odds::filter_by_odds::<_, _, &str>(
-                call_bcf, None, &events, &vartype, min_evidence
-            )?;
-        }
+    if let Some(matches) = matches.subcommand_matches("control-fdr") {
+        let call_bcf = matches.value_of("calls").unwrap();
+
+        let vartype = matches.value_of("vartype").unwrap();
+        let min_len = value_t!(matches, "min-len", u32).ok();
+        let max_len = value_t!(matches, "max-len", u32).ok();
+        let vartype = parse_vartype(vartype, min_len, max_len)?;
+        let alpha = value_t!(matches, "fdr", f64)?;
+        let alpha = LogProb::from(Prob::checked(alpha)?);
+        filtration::fdr::control_fdr::<_, _, &str>(
+            call_bcf, None, &events, &vartype, alpha
+        )?;
+    } else if let Some(matches) = matches.subcommand_matches("posterior-odds") {
+        let score = matches.value_of("odds").unwrap();
+        let min_evidence = match score {
+            "none" => KassRaftery::None,
+            "barely" => KassRaftery::Barely,
+            "positive" => KassRaftery::Positive,
+            "strong" => KassRaftery::Strong,
+            "very-strong" => KassRaftery::VeryStrong,
+            _ => panic!("bug: unexpected KassRaftery score"),
+        };
+        filtration::posterior_odds::filter_by_odds::<_, &str, &str>(
+            None, None, &events, min_evidence
+        )?;
     }
 
     Ok(())

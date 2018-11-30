@@ -149,23 +149,41 @@ subcommands:
             value_name: FILE
             help: Path to file that will observations and the parameters of the fitted model as JSON.
 
-  - control-fdr:
-      about: Filter calls for controlling the false discovery rate (FDR) at given level.
+  - filter-calls:
+      about: |
+        Filter calls by either controlling the false discovery rate (FDR) at given level,
+        or by posterior odds against the given events.
       args:
         - calls:
             required: true
             value_name: BCF
             help: Calls as provided by prosic tumor-normal.
-        - alpha:
+        - fdr:
             long: fdr
             short: a
-            default_value: "0.05"
+            value_name: ALPHA
+            conflicts_with: odds
+            group: method
             help: FDR to control for.
+        - odds:
+            long: odds
+            short: o
+            value_name: SCORE
+            possible_values: [none, barely, positive, strong, very-strong]
+            conflicts_with: fdr
+            group: method
+            help: |
+              Kass-Raftery (Kass and Raftery, 1995) score to
+              filter out all calls where the posterior odds against the given
+              events is beyond the score. E.g., when providing --odds positive,
+              all calls where the odds against the given events are positive are
+              removed.
         - event:
             long: event
             short: e
             value_name: STRING
-            help: Event to consider.
+            multiple: true
+            help: Events to consider.
         - vartype:
             long: var
             value_name: STRING

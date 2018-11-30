@@ -28,6 +28,7 @@ use clap::App;
 
 pub mod call;
 pub mod estimate;
+pub mod filter;
 
 
 #[cfg(feature="flame_it")]
@@ -77,7 +78,7 @@ fn main() {
             process::exit(1);
         }
     } else if let Some(matches) = matches.subcommand_matches("control-fdr") {
-        if let Err(e) = estimate::fdr(matches) {
+        if let Err(e) = filter::filter(matches) {
             error!("Error: {}", e);
             process::exit(1);
         }

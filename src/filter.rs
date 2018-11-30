@@ -41,7 +41,7 @@ pub fn parse_vartype(vartype: &str, min_len: Option<u32>, max_len: Option<u32>) 
 
 
 pub fn filter(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
-    let events = matches.values_of("event").unwrap();
+    let events = matches.values_of("events").unwrap();
     let events = events.into_iter().map(|event| DummyEvent { name: event.to_owned() }).collect_vec();
 
     if let Some(matches) = matches.subcommand_matches("control-fdr") {

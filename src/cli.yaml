@@ -154,8 +154,8 @@ subcommands:
         Filter calls by either controlling the false discovery rate (FDR) at given level,
         or by posterior odds against the given events.
       args:
-        - event:
-            long: event
+        - events:
+            long: events
             short: e
             value_name: STRING
             multiple: true

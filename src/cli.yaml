@@ -130,6 +130,11 @@ subcommands:
             value_name: INT
             default_value: "100"
             help: Number of bases to consider left and right of indel breakpoint when calculating read support. This number should not be too large in order to avoid biases caused by other close variants.
+        - max-depth:
+            long: max-depth
+            value_name: INT
+            default_value: "500"
+            help: Maximum number of candidate fragments to consider when evaluating a variant. If the maximum is exceeded, candidates will be randomly subsampled to the given maximum. This happens with a hardcoded seed, guaranteeing a deterministic result. Note: the maximum depth puts a lower bound to the minimum detectable allele frequency. With a maximum depth of n, the minimum theoretically detectable allele frequency is 1 / n.
 
   - estimate-mutation-rate:
       about: Estimate the effective mutation rate of a tumor sample from a VCF/BCF with candidate variants from STDIN.

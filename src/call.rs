@@ -39,6 +39,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let flat_priors = matches.is_present("flat-priors");
     let exclusive_end = matches.is_present("exclusive-end");
     let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap();
+    let max_depth = value_t!(matches, "max-depth", usize).unwrap();
 
     let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
     let prob_spurious_del = Prob::checked(value_t_or_exit!(matches, "prob-spurious-del", f64))?;
@@ -74,7 +75,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_spurious_del,
         prob_ins_extend,
         prob_del_extend,
-        indel_haplotype_window
+        indel_haplotype_window,
+        max_depth
     );
 
     // init normal sample
@@ -90,7 +92,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_spurious_del,
         prob_ins_extend,
         prob_del_extend,
-        indel_haplotype_window
+        indel_haplotype_window,
+        max_depth
     );
 
     // setup events

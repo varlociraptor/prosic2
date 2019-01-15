@@ -132,7 +132,6 @@ subcommands:
             help: Number of bases to consider left and right of indel breakpoint when calculating read support. This number should not be too large in order to avoid biases caused by other close variants.
         - max-depth:
             long: max-depth
-            short: d
             value_name: INT
             default_value: "500"
             help: |

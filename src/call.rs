@@ -117,7 +117,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         libprosic::call::pairwise::PairEvent {
             name: "somatic_normal".to_owned(),
             af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
-            af_control: ContinuousAlleleFreqs::exclusive(0.1..0.5),
+            af_control: ContinuousAlleleFreqs::exclusive(0.0..0.5),
         },
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),

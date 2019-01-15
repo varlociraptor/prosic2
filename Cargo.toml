@@ -4,7 +4,7 @@ version = "2.2.0-alpha0"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
-libprosic = { git="https://github.com/prosic/libprosic.git", branch="subsample-candidates" }
+libprosic = { git="https://github.com/prosic/libprosic.git", branch="observable-allelefreqs" }
 clap = {version = "2.24", features = ["yaml", "color", "suggestions"]}
 rust-htslib = "0.22"
 bio = { git="https://github.com/rust-bio/rust-bio.git" }

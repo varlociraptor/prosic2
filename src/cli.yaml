@@ -110,6 +110,13 @@ subcommands:
         - omit-fragment-evidence:
             long: omit-fragment-evidence
             help: Omit evidence consisting of read pairs with unexpected insert size (insert size parameters will be ignored).
+        - omit-repeats:
+            long: omit-repeats
+            value_name: VARTYPE
+            possible_values: ["INS", "DEL", "SNV", "REF"]
+            min_values: 1
+            multiple: true
+            help: Omit variants of the given types if they are located in a soft-masked repeat (lowercase letters) in the reference genome. This results in treating those variants as if there are no covering reads.
         - observations:
             long: obs
             value_name: FILE

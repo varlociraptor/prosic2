@@ -1,8 +1,9 @@
 use std::error::Error;
 
+use itertools::Itertools;
 use clap;
 use libprosic;
-use libprosic::model::{ContinuousAlleleFreqs, DiscreteAlleleFreqs};
+use libprosic::model::{ContinuousAlleleFreqs, DiscreteAlleleFreqs, VariantType};
 use rust_htslib::bam;
 use rust_htslib::bam::Read;
 use bio::stats::Prob;
@@ -41,6 +42,19 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let indel_haplotype_window = value_t!(matches, "indel-window", u32).unwrap();
     let max_depth = value_t!(matches, "max-depth", usize).unwrap();
 
+    let omit_repeats = matches.values_of("omit-repeats").map_or(
+        vec![],
+        |values| {
+            values.filter_map(|vartype| {
+                if vartype == "none" {
+                    None
+                } else {
+                    Some(VariantType::from(vartype))
+                }
+            }).collect_vec()
+        }
+    );
+
     let prob_spurious_ins = Prob::checked(value_t_or_exit!(matches, "prob-spurious-ins", f64))?;
     let prob_spurious_del = Prob::checked(value_t_or_exit!(matches, "prob-spurious-del", f64))?;
     let prob_ins_extend = Prob::checked(value_t_or_exit!(matches, "prob-ins-extend", f64))?;
@@ -76,7 +90,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_ins_extend,
         prob_del_extend,
         indel_haplotype_window,
-        max_depth
+        max_depth,
+        &omit_repeats,
     );
 
     // init normal sample
@@ -93,7 +108,8 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
         prob_ins_extend,
         prob_del_extend,
         indel_haplotype_window,
-        max_depth
+        max_depth,
+        &omit_repeats,
     );
 
     // setup events

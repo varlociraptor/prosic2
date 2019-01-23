@@ -27,7 +27,6 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let deletion_factor = value_t!(matches, "deletion-factor", f64).unwrap();
     let insertion_factor = value_t!(matches, "insertion-factor", f64).unwrap();
     let tumor_purity = value_t!(matches, "purity", f64).unwrap();
-    let pileup_window = value_t!(matches, "pileup-window", u32).unwrap();
     let no_fragment_evidence = matches.is_present("omit-fragment-evidence");
     let omit_snvs = matches.is_present("omit-snvs");
     let omit_indels = matches.is_present("omit-indels");
@@ -79,10 +78,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // init tumor sample
     let tumor_sample = libprosic::Sample::new(
         tumor_bam,
-        pileup_window,
         !no_fragment_evidence,
-        false,
-        false,
         tumor_alignment_properties,
         libprosic::likelihood::LatentVariableModel::new(tumor_purity),
         prob_spurious_ins,
@@ -97,10 +93,7 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     // init normal sample
     let normal_sample = libprosic::Sample::new(
         normal_bam,
-        pileup_window,
         !no_fragment_evidence,
-        false,
-        false,
         normal_alignment_properties,
         libprosic::likelihood::LatentVariableModel::new(1.0),
         prob_spurious_ins,

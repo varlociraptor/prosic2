@@ -96,11 +96,6 @@ subcommands:
             value_name: FLOAT
             default_value: "0.0"
             help: "Extension rate of spurious insertions by the sequencer (Illumina: 0.0, see Schirmer et al. BMC Bioinformatics 2016)."
-        - pileup-window:
-            long: pileup-window
-            value_name: INT
-            default_value: "2500"
-            help: Window to investigate for evidence left and right of each variant.
         - omit-snvs:
             long: omit-snvs
             help: Don't call SNVs.

@@ -110,23 +110,23 @@ pub fn tumor_normal(matches: &clap::ArgMatches) -> Result<(), Box<Error>> {
     let events = [
         libprosic::call::pairwise::PairEvent {
             name: "germline_het".to_owned(),
-            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
             af_control: ContinuousAlleleFreqs::singleton(0.5),
         },
         libprosic::call::pairwise::PairEvent {
             name: "germline_hom".to_owned(),
-            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_case: ContinuousAlleleFreqs::inclusive(0.0..1.0),
             af_control: ContinuousAlleleFreqs::singleton(1.0),
         },
         libprosic::call::pairwise::PairEvent {
             name: "somatic_tumor".to_owned(),
-            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0).min_observations(2),
             af_control: ContinuousAlleleFreqs::absent(),
         },
         libprosic::call::pairwise::PairEvent {
             name: "somatic_normal".to_owned(),
-            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0),
-            af_control: ContinuousAlleleFreqs::exclusive(0.0..0.5),
+            af_case: ContinuousAlleleFreqs::left_exclusive(0.0..1.0).min_observations(2),
+            af_control: ContinuousAlleleFreqs::exclusive(0.0..0.5).min_observations(2),
         },
         libprosic::call::pairwise::PairEvent {
             name: "absent".to_owned(),

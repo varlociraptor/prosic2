@@ -3,6 +3,8 @@
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/prosic/README.html)
 [![Anaconda-Server Badge](https://anaconda.org/bioconda/prosic/badges/downloads.svg)](http://bioconda.github.io/recipes/prosic/README.html)
 
+**Prosic has been succeeded by [Varlociraptor](https://varlociraptor.github.io). Please use Varlociraptor instead.**
+
 PROSIC is a caller for somatic variants in tumor-normal sample pairs, sequenced with any next-generation sequencing technology.
 It provides a novel latent variable model that integrates various levels of uncertainty, and thereby allows to properly asses the probability of having a somatic variant while controlling the false discovery rate.
 

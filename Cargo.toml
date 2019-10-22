@@ -1,6 +1,6 @@
 [package]
 name = "prosic"
-version = "2.2.2"
+version = "2.1.2"
 authors = ["Johannes Köster <johannes.koester@tu-dortmund.de>"]
 
 [dependencies]
